@@ -1,0 +1,85 @@
+.cartBox{
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.dropdown{
+    position: absolute;
+    top: 30px;
+    left: 3%;
+    width: 40%;
+    font-size: 18px;
+    text-align: left;
+}
+
+.productListBox{
+    position: absolute;
+    top: 80px;
+    bottom: 30px;
+    width: 45%;
+    left: 3%;
+}
+
+.infoBox{
+    position: absolute;
+    top: 20px;
+    bottom: 30px;
+    width: 45%;
+    right: 3%;
+}
+
+.cartButtonBox{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+}
+
+.cartButton{
+    width: 40%;
+    margin: 0;
+    height: 50px;
+    vertical-align: middle;
+    line-height: 60px;
+}
+
+.cartButtonForm{
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 14px; 
+    width: 47%; 
+    margin-left: 2%;
+}
+
+.cartTxt{
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.cartFormPlacer{
+    position: absolute;
+    top: 100px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.cartForm{
+    position: relative;
+    top: 30px;
+    width: 90%;
+    left: 5%;
+    margin-top: 15px;
+}
+
+.cartDropdown{
+    position: absolute;
+    top: 30px;
+    left: 3%;
+    width: 45%;
+}

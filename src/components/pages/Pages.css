@@ -1,0 +1,53 @@
+.PageStyle{
+    position: absolute;
+    top: 60px;
+    left: 200px;
+    bottom: 0;
+    right: 0;
+    background: white;
+}
+
+.leftBoxStyle{
+    background-color: rgb(131, 130, 130);
+}
+
+.topBoxStyle{
+    background-color: rgb(63, 63, 63);
+}
+
+.bottomBoxStyle{
+    background-color: rgb(110, 109, 109);
+}
+
+.contentBoxStyle{
+    background-color: rgb(243, 243, 243);
+}
+
+.title{
+    position: absolute;
+    top: 10px;
+}
+
+.sidebar{
+    height:92vh;
+    -ms-flex: 0 0 200px;
+    flex: 0 0 200px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.orderInfoBox{
+    position: relative;
+    width: 80%;
+    height: 80%;
+    left: 10%;
+    top: 50px;
+}
+
+.frameBordering{
+    position: absolute;
+    top: 3vh;
+    left: 3vh;
+    bottom: 3vh;
+    right: 3vh;
+}

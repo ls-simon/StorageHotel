@@ -1,0 +1,14 @@
+.UserOrderLeft{
+    position: absolute;
+    left: 0;
+    width: 48%;
+    height: 100%;
+}
+
+.UserOrderRight{
+    position: absolute;
+    right: 0;
+    top: 40%;
+    width: 48%;
+    height: 100%;
+}

@@ -1,0 +1,25 @@
+.ErrorBox{
+    position: absolute;
+    top: 40px;
+    left: 140px;
+    bottom: 0;
+    right: 0;
+    background: white;
+    z-index: -500;
+}
+
+.ErrorText{
+    color: red;
+    font-size: 40px;
+    z-index: -500;
+}
+
+.ErrorPage{
+    z-index: -500;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: white;
+}

@@ -1,0 +1,19 @@
+.informationBox{
+    position: absolute;
+    top: 125px;
+    left: 15%;
+    width: 70%;
+}
+
+.infoText{
+    position: relative;
+    width: 100%;
+    text-align: left;
+}
+
+.infoButton{
+    margin-top: 20px;
+    width: 100%;
+}
+
+

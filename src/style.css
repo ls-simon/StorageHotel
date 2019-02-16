@@ -1,0 +1,117 @@
+body {
+    background-color: white;
+    z-index: 1;
+}
+
+.customText_w{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    text-align: center;
+    font-size: 2vh;
+    color: rgb(255, 255, 255);
+}
+
+.customText_w_medium{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    text-align: center;
+    font-size: 3vh;
+    color: rgb(255, 255, 255);
+}
+
+.customText_b{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    text-align: center;
+    font-size: 2vh;
+    color: rgb(0, 0, 0);
+}
+
+.customText_b_medium{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    text-align: center;
+    font-size: 3vh;
+    color: rgb(0, 0, 0);
+}
+
+.customText_b_bold{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    text-align: center;
+    font-size: 2vh;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+
+.customText_b_big{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    text-align: center;
+    width: 100%;
+    font-size: 4vh;
+    color: rgb(0, 0, 0);
+}
+
+.std_BTN{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    color: white;
+    background-color: rgb(136, 136, 136);
+    border-style: solid;
+    border-color: rgb(94, 94, 94); 
+}
+
+.dark_BTN{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    color: white;
+    background-color: rgb(56, 56, 56);
+    border-style: solid;
+    border-color: rgb(65, 65, 65); 
+}
+
+.yellow_BTN{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    color: white;
+    background-color: rgb(235, 176, 49);
+    border-style: solid;
+    border-color: rgb(94, 94, 94); 
+}
+
+.green_BTN{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    color: white;
+    background-color: rgb(24, 155, 20);
+    border-style: solid;
+    border-color: rgb(94, 94, 94); 
+}
+
+.blue_BTN{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    color: white;
+    background-color: rgb(20, 112, 155);
+    border-style: solid;
+    border-color: rgb(94, 94, 94); 
+}
+
+.red_BTN{
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    color: white;
+    background-color: rgb(170, 11, 11);
+    border-style: solid;
+    border-color: rgb(94, 94, 94);  
+}
+
+.pushTop{
+    top: 30px;
+}
+
+.makeRelative{
+    position: relative;
+}
+
+table, th, td{
+    border: 1px solid black;
+    font-family: 'Trebuchet MS', Tahoma, Arial;
+    text-align: center;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}

@@ -1,0 +1,54 @@
+.Table{
+    flex-grow: 5;
+}
+
+.SideBar{
+    flex-grow:7;
+}
+
+.Categories{
+    flex-grow: 3;
+}
+
+.OrderList{
+    background-color: white;
+}
+
+.AdminOrderLeft{
+    position: absolute;
+    left: 0;
+    width: 40%;
+    height: 100%;
+}
+
+.AdminOrderRight{
+    position: absolute;
+    right: 0;
+    width: 57%;
+    height: 100%;
+}
+
+.darkenReactTable{
+    background-color: rgb(202, 202, 202);
+}
+
+.AdminOrderFontMinimize{
+    font-size: 2vh;
+}
+
+.AdinOrderButtonSizer{
+    width: 100%;
+    margin-top: 1vh;
+    height: 4vh;
+    font-size: 2vh;
+}
+
+.leftReactTableAdminOrder{
+    height: 80%;
+}
+
+.rightReactTableAdminOrder{
+    height: 85%;
+}
+
+

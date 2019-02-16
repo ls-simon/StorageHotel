@@ -1,0 +1,33 @@
+.topBox{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+}
+
+.topText{
+    margin-top: 5px; 
+}
+
+.stockDeciderBox{
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    height: 60px;
+}
+
+.stockExportButton{
+    position: absolute;
+    width: 25%;
+    right: 20px;
+}
+
+.listBox{
+    position: absolute;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}

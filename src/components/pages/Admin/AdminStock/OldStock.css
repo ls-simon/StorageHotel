@@ -1,0 +1,117 @@
+.pickBox{
+    width: 300px;
+    height: 100%;
+}
+
+.topBox{
+    position: absolute;
+    left: 300px;
+    right: 0;
+    height: 40px;
+}
+
+.bottomBox{
+    position: absolute;
+    left: 300px;
+    right: 0;
+    height: 60px;
+    bottom: 0;
+}
+
+.stockListBox{
+    position: absolute;
+    left: 300px;
+    right: 0;
+    bottom: 60px;
+    top: 40px;
+}
+
+.stockTxt{
+    position: absolute;
+    width: 100%;
+    text-align: center;
+}
+
+.leftTxt{
+    top: 50px;
+    position: absolute;
+    width: 300px;
+    text-align: center;
+}
+
+.stockButton_f{
+    width: 100%;
+    height: 50px;
+    margin-top: 5px;
+    vertical-align: middle;
+    line-height: 60px;
+}
+
+.stockButton{
+    width: 25%;
+    height: 50px;
+    margin-top: 5px;
+    vertical-align: middle;
+    line-height: 60px;
+}
+
+.stockForm{
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 14px; 
+  width: 25%;
+}
+
+.AdminStockTable{
+    position: absolute;
+    top: 5%;
+    right: 0%;
+    bottom: 10%;
+    width: 75%;
+    height: auto;
+}
+
+.title_r{
+    position: absolute;
+    top: 10px;
+    color: red;
+}
+
+.subTitle{
+    position: absolute;
+    top: 60px;
+}
+
+.note{
+    position: absolute;
+    top: 380px;
+    width: 70%;
+    left: 15%;
+}
+
+.newForm{
+    position: relative;
+    width: 80%;
+    left: 10%;
+    top: 100px;
+}
+
+.newButton{
+    width: 100%;
+    font-size: 20px;
+}
+
+.stockTable{
+    position: relative;
+    width: 100%;
+}
+
+.pickMe{
+    position: relative;
+    width: 0;
+    height: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}

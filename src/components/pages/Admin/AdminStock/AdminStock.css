@@ -1,0 +1,39 @@
+.MainContainer{
+    height: 85.9vh;
+}
+
+.CustomerList{
+    flex-grow: 1;
+}
+
+.Table{
+    flex-grow: 7;
+}
+
+.Header{
+    text-align: center;
+    font-size: 1.65vw;
+}
+
+.ReactTable{
+    height: 80vh;
+    overflow-y: auto;
+}
+
+.CRUD{
+    justify-content: space-evenly;
+}
+
+.CRUDbutton{
+    flex-grow: 1;
+}
+
+.stockBTNSizer{
+    width: 150px;
+    height: 50px;
+    font-size: 2vh;
+}
+
+.adminReduceFontSize{
+    font-size: 2vh;
+}
