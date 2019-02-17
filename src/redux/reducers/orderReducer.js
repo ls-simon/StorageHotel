@@ -1,7 +1,10 @@
-const initState = {orders: [] }
+const initState = {selectedOrder: {} }
 
 const orderReducer = (state = initState, action) => {
    switch (action.type) {
+       case 'SET_ORDER_AS_SELECTED':
+        console.log("STATE", state, "ACTION", action)
+        return {...state, selectedOrder: action.state}
        case 'CREATE_ORDER':
         console.log('created order', action.order)
         return state

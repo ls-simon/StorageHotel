@@ -57,7 +57,7 @@ class AdminAdd extends React.Component {
                                 className="form-control mb-2" 
                                 onChange={this.onChange}
                                 name="password"
-                                placeholder="New password" required/>
+                                placeholder="Kodeord - Mindst 6 karakterer!" required/>
 
                                 <button type="submit" className="green_BTN btn-lg btn-block btn my-2">Tilføj ny medarbejder</button>
                         </form>

@@ -2,12 +2,13 @@ import React,{Component} from 'react';
 import {connect} from "react-redux";
 import {compose} from "redux";
 import { firestoreConnect } from 'react-redux-firebase';
-import ReactTable from 'react-table';
+
 import {Link, Redirect} from "react-router-dom";
 
 import "../../Pages.css";
 import "./AdminProfile.css";
 import { getColumnsFromArray } from '../../../../handlers/columnsHandlers.js';
+import ViewTable from './../../../ReactTables/ViewTable'
 
 class AdminProfile extends Component {
     
@@ -43,13 +44,8 @@ class AdminProfile extends Component {
              </div>
                 <div className="informationBox">
                 <h1 className="lead"><strong>Medarbejdere:</strong></h1>
-                <ReactTable
-                data={this.props.users} 
-                columns={columns} 
-                showPagination={false} 
-                className="-striped -highlight"
-                style={{height: "50vh"}}
-                />
+                <ViewTable data={this.props.users} columns={columns}/>
+                
                 
                 <Link to="/Admin/Profile/AddEmployee" className="green_BTN btn my-2 mx-2">Ny medarbejder</Link>
                 </div>

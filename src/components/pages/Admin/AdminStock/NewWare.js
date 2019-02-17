@@ -5,7 +5,7 @@ import {firestoreConnect} from "react-redux-firebase";
 import { Link } from "react-router-dom";
 
 import {createProductAction} from "../../../../redux/actions/productActions";
-
+import { withRouter } from "react-router-dom";
 import "../../Pages.css";
 import "./AdminStock.css";
 import Dropdown from "../../../MenuComponents/Dropdown/Dropdown";

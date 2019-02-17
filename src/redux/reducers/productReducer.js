@@ -1,25 +1,25 @@
-const initialState ={
-    id: "", 
-    quantity:"", 
-    name:"", 
-};
+const initialState ={};
 
 const loginReducer = (state = initialState, action) => {
     
     switch(action.type){
-        case "SET_PRODUCT_ID":
-        case "SET_PRODCUT_QUANTITY":
-        case "SET_PRODUCT_NAME":
-            state = {...state, ...action.payload}                
-            break;
         case "DELETE_ADRESS":
             state ={...state, initialState} 
             break;
+        case "UPDATE_PRODUCT_SUCCESS":
+            console.log("Product updated!", action);
+        case "UPDATE_PRODUCT_ERROR":
+            console.log("An error occured while updating product", action.err);
+            
         case "CREATE_PRODUCT":
             console.log("Product was created",action);
             break;
         case "CREATE_PRODCUT_ERROR":
             console.log("ERROR:", action.error)
+        case "SET_PRODUCT_AS_SELECTED":
+            console.log(action);
+            
+            state = {...state, selectedProduct: action.state}
         default:
     }  
     return state

@@ -23,7 +23,7 @@ export const createOrder = (order) => {
         })
     }
 }
-export const setSelectedOrder =()=>{
+export const setSelectedOrderAction =()=>{
     
 }
 

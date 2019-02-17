@@ -1,7 +1,9 @@
 import React from 'react';
 import "./Order.css";
 import ReactTable from 'react-table';
-import { connect} from "react-redux";
+import {connect} from "react-redux";
+import {firestoreConnect} from 'react-redux-firebase';
+import {compose} from "redux";
 import {Redirect} from "react-router-dom";
 import {makeProductsData} from '../../../handlers/dataHandlers.js';
 import {itemPreviouslyAddedWarning, userNotFoundWarning, amountIsNotANumberWarning, 
@@ -11,6 +13,7 @@ import { getColumnsFromArray } from '../../../handlers/columnsHandlers.js';
 import { get } from '../../../handlers/requestHandlers';
 import Dropdown from "../../MenuComponents/Dropdown/Dropdown";
 import {makeCustomerData} from "../../../handlers/dataHandlers";
+
 
 //TODO: Render warning in previouslyAddedWarning
 //TODO: Put items in cart notification symbol on cart button
@@ -42,68 +45,16 @@ class UserOrder extends React.Component {
         this.renderEditable = this.renderEditable.bind(this);
     }
 
-    componentDidMount() {
-
-        this.getClients();
-        this.getPublishers();
-        this.getStock();           
-    }
-
-     getClients() {
-
-         get('employee/clients', (data) => {
-             const clients = makeCustomerData(data);
-             this.concatinateWithNewData(clients);
-         });
-     }
  
-     getPublishers() {
 
-        get('employee/publishers', (data) => { 
-            const publishers = makeCustomerData(data);
-            this.concatinateWithNewData(publishers);
-         });
-     }
- 
-     concatinateWithNewData(newData) {
-
-         const customersCopy = this.state.customers;
-         let concatinatedData = customersCopy.concat(newData);
-         this.setState({ customers: concatinatedData });
-     }
-
-    getStock() {
-
-        const userType = this.props.userType.toLowerCase();
-        const id = this.props.userId;
-
-        if(userType==="employee"){
-            get('employee/products', (data) => {
-                const products = makeProductsData(data);
-                this.setState({products: products})
-            })
-
-        } else {
-
-            get(userType + 's/' + id + '/products', (data) => {
-                let products = [];
-                if (data == null) {
-                    userNotFoundWarning();
-                } else {
-                    products = makeProductsData(data);
-                    this.setState({ products: products });
-                }
-            });
-        }
-    }
-
+    
     addSelectedToOrderLine = () => {
 
         if(this.state.selected!==null){
             let newLine = {}
             let userType = this.state.userType.toLowerCase();
 
-            userType === 'employee' ? newLine = this.state.filteredStock[this.state.selected] : newLine = this.state.products[this.state.selected];
+            userType === 'employee' ? newLine = this.state.filteredStock[this.state.selected] : newLine = this.props.products[this.state.selected];
 
             if (this.state.orderLines.some(orderLine => orderLine.productId === newLine.productId)) {
                 itemPreviouslyAddedWarning();
@@ -131,7 +82,7 @@ class UserOrder extends React.Component {
     //Not in use - should be in second if in addSelectedToOrderLine
     checkIfPreviouslyAdded = (orderLine) => {
 
-        if(this.state.orderLines.filter(line => orderLine.hexId === line.hexId)) {
+        if(this.state.orderLines.filter(line => orderLine.id === line.id)) {
             itemPreviouslyAddedWarning(); 
         }
     }
@@ -173,9 +124,9 @@ class UserOrder extends React.Component {
                     var typedAmount = e.target.innerHTML ? e.target.innerHTML : "0";
                     if (!typedAmount.match(/^\d+$/)) { amountIsNotANumberWarning(); }
                     
-                    this.state.products
+                    this.props.products
                     .filter(product => 
-                        product.hexId === cellInfo.original.hexId)
+                        product.id === cellInfo.original.id)
                     .map(product => {
                     
                         if (typedAmount <= product.quantity) { 
@@ -192,7 +143,7 @@ class UserOrder extends React.Component {
                         
                 }}
                 dangerouslySetInnerHTML={{
-                __html: this.state.products[cellInfo.index][cellInfo.column.id]
+                __html: this.props.products[cellInfo.index][cellInfo.column.id]
                 }}
             required/>
         );
@@ -233,7 +184,7 @@ class UserOrder extends React.Component {
 
         if(e.target.value.toLowerCase()!=="choose customer"){    
             this.setState({userSelectedId:e.target.value},()=>{
-                this.setState({userSelectedType:this.state.customers.find(x=>x.hexId===this.state.userSelectedId).userType},() => {
+                this.setState({userSelectedType:this.state.customers.find(x=>x.id===this.state.userSelectedId).userType},() => {
                     this.filterStock();
                 })
             })
@@ -244,15 +195,16 @@ class UserOrder extends React.Component {
 
     filterStock() {
 
-        let hexId = this.state.userSelectedId;
-        let userType = this.state.userSelectedType.toLowerCase();
-        let filteredStock = this.state.products.filter(x=>x.ownerHexId===hexId);
-        const customer = this.state.customers.filter(x=>x.hexId===hexId)[0];
+        let uid = this.props.auth.uid;
+        let userType = this.props.userType.toLowerCase();
+
+        let filteredStock = this.props.products.filter(x=>x.ownerRef.id===uid);
+        const customer = this.state.customers.filter(x=>x.id===uid)[0];
 
         if (userType === 'publisher') {
-            if (customer.clients !== 'none') {
+            if (customer.clients) {
                 customer.clients.forEach((client) => {
-                   let clientsProducts = this.state.products.filter(x=>x.ownerHexId===client.hexId);                    
+                   let clientsProducts = this.props.products.filter(x=>x.ownerRef.id===client.id);                    
                    filteredStock.push(...clientsProducts);
                 }) 
             }
@@ -266,8 +218,9 @@ class UserOrder extends React.Component {
         if(!this.props.auth.uid){
             return <Redirect to="/"/>
         }
-
-        const data = this.state.products;
+        if (this.props.products) {
+            
+        const data = this.props.products;
         const columns = getColumnsFromArray([
             "Product Id", 
             "Product Name", 
@@ -298,10 +251,10 @@ class UserOrder extends React.Component {
                                             if (rowInfo && rowInfo.row) {
                                             return {
                                                 onClick: () => {
-                                                    if (!this.state.filteredStock && this.state.userType.toLowerCase() === 'employee') {
+                                                    if (!this.state.filteredStock && this.props.userType.toLowerCase() === 'employee') {
                                                         customerIsNotSelectedWarning();
                                                     } else {
-                                                        this.setState({selected: rowInfo.index, selectedId: rowInfo.original.hexId })
+                                                        this.setState({selected: rowInfo.index, selectedId: rowInfo.original.id })
                                                     }
                     
                                                     },
@@ -336,15 +289,20 @@ class UserOrder extends React.Component {
             </div>
         );
     }
+
+}
 }
 
-const mapStateToProps = (state)=>{
-
+const mapStateToProps = (state) => {
+    console.log(state);
+    
     return{
+
         auth: state.firebase.auth,
         profile: state.firebase.profile,
-        userType: state.loginReducer.userType, 
-        userId: state.loginReducer.userId
+        userType: state.firebase.profile.userType, 
+        userId: state.loginReducer.userId,
+        products: state.firestore.ordered.products   
     }
 }
 
@@ -356,6 +314,10 @@ const mapDispatchToProps = (dispatch) =>{
     }
 }
 
-export default connect(mapStateToProps ,mapDispatchToProps)(UserOrder)
-
+export default compose(
+    connect(mapStateToProps, mapDispatchToProps), 
+    firestoreConnect(
+        [
+            {collection: 'products'}
+        ]))(UserOrder)
 
