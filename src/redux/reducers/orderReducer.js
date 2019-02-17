@@ -14,7 +14,6 @@ const orderReducer = (state = initState, action) => {
         console.log(action.order);
         
        default: 
-        console.log("default");
    }
     return state
 }

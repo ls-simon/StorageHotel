@@ -1,10 +1,10 @@
 import React from 'react';
+import {Link, Redirect} from "react-router-dom"
+import {connect} from "react-redux";
+
+import {signUpEmployeeAction} from "./../../../../redux/actions/authActions";
 import "../../Pages.css";
 import "./AdminProfile.css";
-import {Link, Redirect} from "react-router-dom"
-import {post} from './../../../../handlers/requestHandlers.js';
-import {connect} from "react-redux";
-import {signUpEmployee} from "./../../../../redux/actions/authActions";
 
 class AdminAdd extends React.Component {
 
@@ -13,7 +13,7 @@ class AdminAdd extends React.Component {
         
         this.state = {
             email: "",
-            nickName: "",
+            name: "",
             password: "",
             userType: "employee"
         };
@@ -24,7 +24,8 @@ class AdminAdd extends React.Component {
     onSubmit = (e) =>{
         e.preventDefault();
 
-        this.props.signUp(this.state);
+        this.props.signUpEmployee(this.state);
+        this.props.history.push('/Home')
     }
 
     render() {
@@ -36,7 +37,7 @@ class AdminAdd extends React.Component {
         return(
             <div className="PageStyle customText_b">
                 <div className="container col mb-3">
-                    <h1 className="customText_b_big text-center display-3">Add new employee:</h1>
+                    <h1 className="customText_b_big text-center display-3">Ny medarbejder:</h1>
                     <div className="container">
                         <form onSubmit={this.onSubmit}>
                             <input 
@@ -49,8 +50,8 @@ class AdminAdd extends React.Component {
                                 type="text" 
                                 className="form-control mb-2" 
                                 onChange={this.onChange}
-                                name="nickName"
-                                placeholder="Nickname" required/>
+                                name="name"
+                                placeholder="Navn" required/>
                             <input 
                                 type="password" 
                                 className="form-control mb-2" 
@@ -58,9 +59,9 @@ class AdminAdd extends React.Component {
                                 name="password"
                                 placeholder="New password" required/>
 
-                                <button type="submit" className="green_BTN btn-lg btn-block btn my-2">Add new employee</button>
+                                <button type="submit" className="green_BTN btn-lg btn-block btn my-2">Tilføj ny medarbejder</button>
                         </form>
-                        <Link to="/Admin/Profile" className="std_BTN btn-lg btn-block btn my-2">Back</Link>
+                        <Link to="/Admin/Profile" className="std_BTN btn-lg btn-block btn my-2">Tilbage</Link>
                     </div>
                 </div>
             </div>
@@ -76,7 +77,7 @@ const mapStateToProps = (state) =>{
 
 const mapDispatchToProps = (dispatch) =>{
     return{
-        signUp: (payload) => dispatch(signUpEmployee(payload))
+        signUpEmployee: (payload) => dispatch(signUpEmployeeAction(payload))
     }
 }
 

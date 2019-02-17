@@ -26,6 +26,10 @@ const loginReducer = (state = initialState, action) => {
             console.log("Error",action.error)
             state = {...state,error:action.error.message};
             break;
+        case "DELETE_EMPLOYEE_SUCCESS":
+            break;
+        case "DELETE_EMPLOYEE_ERROR":
+            break;
         default:
     }  
     return state;

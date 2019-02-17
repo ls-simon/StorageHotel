@@ -4,8 +4,7 @@ const Dropdown = (props) =>{
     
     const {action, actors} = props;
     const actorList = actors.map((actor, i)=>{
-        console.log(actor)
-        console.log(actor.name)
+     
         return(
             <option 
             key={i}

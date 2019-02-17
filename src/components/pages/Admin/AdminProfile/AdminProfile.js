@@ -10,101 +10,69 @@ import "./AdminProfile.css";
 import { getColumnsFromArray } from '../../../../handlers/columnsHandlers.js';
 
 class AdminProfile extends Component {
-
+    
     constructor(props){
         super(props);
         
         this.state = {
-            userName: "",
-            nickName: "",
-            userType: props.userType,
-            userId: props.userId,
-            employees: [],
-            selected: [],
-            selectedId: ""
         };
     }
-   
-    componentDidMount() {
-    }
-
-    setLoggedInUserData() {
     
-        const loggedInUser = this.state.employees.filter(employee => employee.hexId == this.props.userId);
-        this.setState({userName: loggedInUser[0].userName, nickName: loggedInUser[0].nickname});
+    
+    getCurrentUserInfo() {
+        console.log(this.props.auth);
+        
+        const currentUser = this.props.users.filter(x => x.id == this.props.auth.uid)[0];
+        return currentUser
     }
-
-
-
-    deleteEmployee = (e) => {
-        e.preventDefault();
-
-        if (window.confirm("Do you wish to delete this employee from the system?")) {
-            
-          //Delete action
-        } 
-    }
-
+    
+    
     render() {
         if(!this.props.auth.uid){
             return <Redirect to="/"/>
         }
-
-         const columns = getColumnsFromArray(["Name"]);
-
-        return(
-            <div className="PageStyle customText_b"> 
-                <h1 className="title customText_b_big">Profile information</h1>
+        if (this.props.users) {
+            
+            const columns = getColumnsFromArray(["Name"]);
+            
+            return(
+                <div className="PageStyle customText_b"> 
+                <div className="container">
+                <h1 className="title customText_b_big">Din email</h1>
+                <div className="center-text">{this.props.auth.email}</div>
+             </div>
                 <div className="informationBox">
-                    <h1 className="lead"><strong>Other employees: {this.state.userName}</strong></h1>
-                    <ReactTable
-                        data={this.props.users} 
-                        columns={columns} 
-                        showPagination={false} 
-                        className="-striped -highlight"
-                        getTrProps={(state, rowInfo) => {
-                            if (rowInfo && rowInfo.row) {
-                                return {
-                                    onClick: (e) => {
-                                        
-                                    this.setState({selected: rowInfo.index, selectedId: rowInfo.original.id })
-                                    },
-                                    style: {
-                                    background: rowInfo.index === this.state.selected ? '#00afec' : 'white',
-                                    color: rowInfo.index === this.state.selected ? 'white' : 'black'
-                                    }
-                                }
-                                }else{
-                                return {}
-                                }
-                            }}
-                        style={{height: "50vh"}}
-                    />
-                   
-                    <Link to="/Admin/Profile/AddEmployee" className="green_BTN btn my-2 mx-2">Add employee</Link>
-                    <div className="red_BTN btn my-2 mx-2" onClick={this.deleteEmployee}>Remove employee</div>
+                <h1 className="lead"><strong>Medarbejdere:</strong></h1>
+                <ReactTable
+                data={this.props.users} 
+                columns={columns} 
+                showPagination={false} 
+                className="-striped -highlight"
+                style={{height: "50vh"}}
+                />
+                
+                <Link to="/Admin/Profile/AddEmployee" className="green_BTN btn my-2 mx-2">Ny medarbejder</Link>
                 </div>
-            </div>
-        );
+                </div>
+                );
+            } else { return (<h1>Vent venligst..</h1>)
+                
+            }
+        }
     }
-}
-
-const mapStateToProps = (state) =>{
-    console.log(state.firestore.ordered.users);
     
-    return{
-        users: state.firestore.ordered.users,
-        auth: state.firebase.auth
+    const mapStateToProps = (state) =>{
+        
+        return{
+            users: state.firestore.ordered.users,
+            auth: state.firebase.auth
+        }
     }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {}
-}
-
-export default compose(
-    connect(mapStateToProps, mapDispatchToProps), 
-    firestoreConnect(
-        [
-            {collection: 'users', where: ['customer', '==', false]}
-        ]))(AdminProfile)
+    
+    
+    export default compose(
+        connect(mapStateToProps, null), 
+        firestoreConnect(
+            [
+                {collection: 'users', where: ['customer', '==', false]}
+            ]))(AdminProfile)

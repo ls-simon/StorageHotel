@@ -7,7 +7,7 @@ import ReactTable from 'react-table';
 import "./AdminUsers.css";
 import {Link, Redirect} from "react-router-dom";
 import {getColumnsFromArray} from "./../../../../handlers/columnsHandlers.js"
-
+import {updateCustomerAction} from "./../../../../redux/actions/userActions"
 
 
 
@@ -19,9 +19,10 @@ class AdminUsers extends Component {
         this.state = {
             customers: [],
             selectedCustomer: {contactInformation: {}},
+            selectedCustomerId: '',
             selected: null,
-            selectedId: null,
-            changed:{}
+            editedCustomer:{},
+            contactInformation: {}
         };
     }
 
@@ -30,10 +31,26 @@ class AdminUsers extends Component {
 
     onChange = (e) => {
         
-        this.setState({...this.state,changed:{...this.state.changed,[e.target.name]:e.target.value}});
+        this.setState({...this.state,editedCustomer:{...this.state.editedCustomer,[e.target.name]:e.target.value}});
+    }
+    
+    onChangeCI = (e) => {
+        this.setState({...this.state,contactInformation:{...this.state.contactInformation,[e.target.name]:e.target.value}});
     }
 
-    onSubmit = () => { }
+    onSubmit = (e) => { 
+        e.preventDefault()
+
+        let payload = {
+           customer: this.state.editedCustomer,
+        contactInformation: this.state.contactInformation,
+        id : this.state.selectedCustomerId
+        }
+        console.log(payload)
+        
+        this.props.updateCustomer(payload)
+        window.alert("Kunde opdateret!")
+    }
  
     onDelete = () => {  
     }
@@ -64,7 +81,7 @@ class AdminUsers extends Component {
                                         onClick: (e) => {
                                             e.preventDefault()
                                             
-                                            this.setState({ selected: rowInfo.index, selectedCustomer: rowInfo.original })
+                                            this.setState({ selected: rowInfo.index, selectedCustomer: rowInfo.original, selectedCustomerId: rowInfo.original.id})
                                         
                                         },
                                         style: {
@@ -92,46 +109,30 @@ class AdminUsers extends Component {
                                                 <label htmlFor="nickName" 
                                                     className="input-group-text" 
                                                     id="nickNameLabel">
-                                                    Nickname
+                                                    Navn
                                                 </label>
                                             </div>
                                                  <input
                                                     onChange={this.onChange}
-                                                    id="nickName" 
+                                                    id="name" 
                                                     className="form-control" 
                                                     type="text"
-                                                    defaultValue={selectedCustomer.name}
-                                                    name="nickName"                                        
+                                                    defaultValue={this.state.selectedCustomer.name}
+                                                    name="name"                                        
                                                     required/>
                                         </div>
                                 
-                                        <div className="input-group mb-2">
-                                            <div className="input-group-prepend">
-                                                <label htmlFor="email" 
-                                                    className="input-group-text" 
-                                                    id="emailLabel">
-                                                    Email
-                                                </label>
-                                            </div>
-                                            <input
-                                                onChange={this.onChange}
-                                                id="email" 
-                                                className="form-control" 
-                                                type="email"
-                                                defaultValue={selectedCustomer.contactInformation.email}
-                                                name="email"                                        
-                                                required />
-                                        </div>
+                        
                                         <div className="input-group mb-2">
                                             <div className="input-group-prepend">
                                                 <label htmlFor="phone" 
                                                     className="input-group-text" 
                                                     id="phoneLabel">
-                                                    Phone Number
+                                                    Telefonnummer
                                                 </label>
                                             </div>
                                             <input
-                                                onChange={this.onChange}
+                                                onChange={this.onChangeCI}
                                                 id="phone" 
                                                 className="form-control" 
                                                 type="number"
@@ -144,11 +145,11 @@ class AdminUsers extends Component {
                                                 <label htmlFor="address" 
                                                     className="input-group-text" 
                                                     id="addressLabel">
-                                                    Address
+                                                    Adresse
                                                 </label>
                                             </div>
                                             <input
-                                                onChange={this.onChange}
+                                                onChange={this.onChangeCI}
                                                 id="address" 
                                                 className="form-control" 
                                                 type="text"
@@ -161,11 +162,11 @@ class AdminUsers extends Component {
                                                 <label htmlFor="city" 
                                                     className="input-group-text" 
                                                     id="cityLabel">
-                                                    City
+                                                    By
                                                 </label>
                                             </div>
                                             <input
-                                                onChange={this.onChange}
+                                                onChange={this.onChangeCI}
                                                 id="city" 
                                                 className="form-control" 
                                                 type="text"
@@ -178,11 +179,11 @@ class AdminUsers extends Component {
                                                 <label htmlFor="zipCode" 
                                                     className="input-group-text" 
                                                     id="zipLabel">
-                                                    Zipcode
+                                                    Postnummer
                                                 </label>
                                             </div>
                                             <input
-                                                onChange={this.onChange}
+                                                onChange={this.onChangCI}
                                                 id="zipCode" 
                                                 className="form-control" 
                                                 type="number"
@@ -194,15 +195,13 @@ class AdminUsers extends Component {
                                                 
                                         <div className="container row">
                                     <div className="col my-2">
-                                        <Link to="/Admin/Users/Create" className="btn adminUserBtn green_BTN">Create new user</Link>
+                                        <Link to="/Admin/Users/Create" className="btn adminUserBtn green_BTN">Opret ny kunde</Link>
                                     </div>
                                     <div className="col my-2">
 
-                                        <button type="submit" className="btn adminUserBtn yellow_BTN">Confirm edit</button>
+                                        <button type="submit" className="btn adminUserBtn yellow_BTN">Bekræft ændringer</button>
                                     </div>
-                                    <div className="col my-2">
-                                        <button type="button" onClick={this.onDelete} className="btn adminUserBtn red_BTN">Delete this user</button>
-                                    </div>
+                                    
                                    
                                 </div>
                                         </form>
@@ -230,7 +229,9 @@ const mapStateToProps = (state) =>{
 }
 
 const mapDispatchToProps = (dispatch) => {
-    return {}
+    return {
+        updateCustomer: (payload) => dispatch(updateCustomerAction(payload))
+    }
 }
 
 export default compose(

@@ -1,12 +1,12 @@
 import React from "react";
 import {Link, Redirect} from "react-router-dom";
-import {get, post} from "../../../../handlers/requestHandlers";
-import Dropdown from "../../../MenuComponents/Dropdown/Dropdown";
-import {makeCustomerData} from './../../../../handlers/dataHandlers.js';
-import {customerProfileFieldsAreValidated} from './../../../../handlers/fieldsValidator';
-import { publisherNotSetOnClientProfileCreationWarning } from "../../../../handlers/exceptions";
 import {connect} from "react-redux";
-import {signUp} from "./../../../../redux/actions/authActions"
+import { firestoreConnect } from 'react-redux-firebase';
+import {compose} from "redux";
+
+import {signUpCustomerAction} from "./../../../../redux/actions/authActions"
+import { publisherNotSetOnClientProfileCreationWarning } from "../../../../handlers/exceptions";
+import Dropdown from "../../../MenuComponents/Dropdown/Dropdown";
 
 class CreateUser extends React.Component{
     
@@ -15,84 +15,69 @@ class CreateUser extends React.Component{
 
         this.state={
             userType:"client",
-            userName:"",
+            name:"",
             password:"",
             passwordRepeat:"",
             //ContactInformation
                 email: "",
                 phoneNumber: "",
-                nickName: "",
                 address: "",
                 city: "",
                 zipCode: "",
             
+            
             publishers: [],
+            publisherTableShows: true
         }
     }
 
-    componentDidMount(){this.getPublishers();}
 
-    getPublishers() {
-
-
-        //TODO: gør listen af employees depedent på firebase
-
-       let publishers = [];
-       publishers.push({nickName:"Independent client",userType:"Create",hexId:"IC"});
-       this.setState({ publishers: publishers});
-       
-    }
 
     onChange = (e) => {this.setState({[e.target.name]:e.target.value});}
 
 
-    showPublisherDropdown(flag){
-
-        this.setState({
-            publisherTableShows: flag
-        })
-    }
-
-    toggleUserType = () =>{
+    toggle = () =>{
 
         if(this.state.userType === "client"){
-            this.setState({userType:"publisher"});
+            this.setState({userType:"publisher", publisherTableShows: false});
         } else {
-            this.setState({userType:"client"});
+            this.setState({userType:"client", publisherTableShows: true});
         }
     }
 
     onSubmit=(e)=>{
         e.preventDefault();
-        this.props.signUp(this.state);
+        let payload = this.state
+        console.log("LOAD",payload);
         
-        window.alert("To ensure that the user has been created the right way you will now be logged in by that user.\n Please verify the information is correct.")
-        //Todo: Display confirmation or error
+        this.props.signUpCustomer(this.state);
+        
+        window.alert("For at sikre at informationerne er korrekte, vil du nu blive logget ind som brugeren,"+
+        "du nu har oprettet\n Verificér at informationerne er korrekte, før du igen logger ind som medarbejder")
     }
 
     displayConfirmation() {
-
-        let id = this.state.selectedActorHexId;
-        if (id === "IC") {
-            window.alert("Independent Client has been created");
-        } else {
-            window.alert("Client " + this.state.nickName +
-        " has been added under publisher " + this.state.publishers.find(x=> x.hexId === this.state.selectedActorHexId).nickName);
-        }
+        window.alert("Kunde oprettet!")
     }
 
 
     setSelected = (e) =>{
-        console.log(e.target.value)
-        if (e.target.value.toLowerCase() !== 'choose customer') {
+        console.log(e.target)
+       
+        console.log("NAME",e.target.name)
+        const value = e.target.value.toLowerCase()
+        console.log("VALUE",value);
+        
+        if (value !== 'choose customer') {
             
-            this.setState({
-                selectedActorHexId:e.target.value,
-                selectedActorUserType:this.state.publishers.find(x=>x.hexId===e.target.value).userType.toUpperCase()
-            },()=>{console.log(this.state)})
+        if (!value.includes('independent')) {
+            this.setState({selectedActorId:e.target.value})
         } else {
-            publisherNotSetOnClientProfileCreationWarning();
+            this.setState({selectedActorId:"INDEPENDENT_CLIENT"})
+            
         }
+
+    }
     }
 
     render(){
@@ -102,9 +87,14 @@ class CreateUser extends React.Component{
         }if(this.props.profile.userType !== "employee"){
             return <Redirect to="/Home"/>
         }
+        if (this.props.users) {
+            let publishers = this.props.users.filter((x)=> x.userType == 'publisher')
+            publishers.push({name: "Uafhængig kunde", userType: "INDEPENDENT_CLIENT"})
+          
+
         return(
             <div className="PageStyle customText_b">
-                <h1 className="customText_b_big text-center">Create a new user</h1>
+                <h1 className="customText_b_big text-center">Opret ny kunde</h1>
                 <div className="col-md-4 offset-md-4">
                     <form onSubmit={this.onSubmit}>
                         <div className="input-group my-3">
@@ -121,80 +111,90 @@ class CreateUser extends React.Component{
                         </div>
                         <div className="input-group my-3">
                             <div className="input-group-prepend">
-                                <label className="input-group-text" htmlFor="passwordRepeat">Repeat Password:</label>
+                                <label className="input-group-text" htmlFor="passwordRepeat">Gentag Password:</label>
                             </div>
                             <input type="password" className="form-control" id="passwordRepeat" name="passwordRepeat" placeholder="Repeat typed password" onChange={this.onChange} required autoFocus/>
                         </div>
                         <div className="input-group my-3">
                             <div className="input-group-prepend">
-                                <label className="input-group-text" htmlFor="nickName">Name:</label>
+                                <label className="input-group-text" htmlFor="name">Kundenavn:</label>
                             </div>
-                            <input type="text" className="form-control" id="nickName" name="nickName" placeholder="Name of the company" onChange={this.onChange} required/>
+                            <input type="text" className="form-control" id="name" name="name" placeholder="Name of the company" onChange={this.onChange} required/>
                         </div>
                         <div className="input-group my-3">
                             <div className="input-group-prepend">
-                                <label className="input-group-text" htmlFor="phone">Phone number:</label>
+                                <label className="input-group-text" htmlFor="phone">Telefonnummer:</label>
                             </div>
                             <input type="number" className="form-control" id="phone" name="phoneNumber" placeholder="12345678" onChange={this.onChange} required/>
                         </div>
 
                         <div className="input-group my-3">
                             <div className="input-group-prepend">
-                                <label className="input-group-text" htmlFor="address">Address:</label>
+                                <label className="input-group-text" htmlFor="address">Adresse:</label>
                             </div>
                             <input type="text" className="form-control" id="address" name="address" placeholder="Fx. Industrivej 2" onChange={this.onChange} required/>
                         </div>
 
                         <div className="input-group my-3">
                             <div className="input-group-prepend">
-                                <label className="input-group-text" htmlFor="city">City:</label>
+                                <label className="input-group-text" htmlFor="city">By:</label>
                             </div>
                             <input type="text" className="form-control" id="city" name="city" placeholder="Fx. Aalborg" onChange={this.onChange} required/>
                         </div>
 
                         <div className="input-group my-3">
                             <div className="input-group-prepend">
-                                <label className="input-group-text" htmlFor="zipCode">Zipcode:</label>
+                                <label className="input-group-text" htmlFor="zipCode">Postnummer:</label>
                             </div>
                             <input type="text" className="form-control" id="zipCode" name="zipCode" placeholder="Fx. 9000" onChange={this.onChange} required/>
                         </div>
 
                         <div className="input-group my-3">
                             <div className="input-group-prepend">
-                                <label className="input-group-text" htmlFor="publisher?">Publisher?:</label>
+                                <label className="input-group-text" htmlFor="publisher?">Forlag?:</label>
                             </div>
-                            <input type="checkbox" className="form-control"  onChange={this.toggleUserType}/>
+                            <input type="checkbox" className="form-control"  onChange={this.toggle}/>
                         </div>
-
-                        <label className="input-group-text" htmlFor="dropdown">If Client, please choose publisher:</label>
-                        <Dropdown className="form-control" actors = {this.state.publishers} action={this.setSelected} id="dropdown"/>
-   
+                        {this.state.publisherTableShows ?  <label className="input-group-text" htmlFor="dropdown">Vælg forlag:</label> : null}
+                        {this.state.publisherTableShows ?  <Dropdown className="form-control" actors={publishers} action={this.setSelected} id="dropdown"/> : null}
+                        
                         <div className="row">
                             <div className="col my-3 mx-4">
-                                <button className="btn green_BTN btn-block" type="submit">Create User</button>
+                                <button className="btn green_BTN btn-block" type="submit">Opret kunde</button>
                             </div>
                             <div className="col my-3 mx-4">
-                                <Link to="/Admin/Users/" className="btn adminUserBtn std_BTN btn-block">Go Back</Link>
+                                <Link to="/Admin/Users/" className="btn adminUserBtn std_BTN btn-block">Anullér</Link>
                             </div>
                         </div>
                     </form>  
                 </div>
             </div>
         )
-    }
+    } else {return (
+        <h1>Vent venligst..</h1>
+    )}
+}   
 }
+
 
 const mapStateToProps = (state) =>{
     return{
         auth: state.firebase.auth,
-        profile: state.firebase.profile
+        profile: state.firebase.profile,
+        users: state.firestore.ordered.users
     }
 }
 
 const mapDispatchToProps = (dispatch) =>{
     return{
-        signUp: (payload) => dispatch(signUp(payload))
+        signUpCustomer: (payload) => dispatch(signUpCustomerAction(payload))
     }
 }
 
-export default connect(mapStateToProps,mapDispatchToProps)(CreateUser)
+export default compose(
+    connect(mapStateToProps,mapDispatchToProps), 
+    firestoreConnect(
+    [{
+    collection: 'users'
+}]
+))(CreateUser)
