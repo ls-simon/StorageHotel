@@ -1,7 +1,6 @@
 const initState = {item: {}}
 
 export const setItemAsSelectedAction = (state = initState) => {
-    console.log(state);
     
     return (dispatch, getState, {getFirebase, getFirestore}) => {
 

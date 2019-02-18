@@ -21,7 +21,6 @@ class UserOrder extends React.Component {
     }
 
     checkUserType() {
-        console.log("userType", this.props.userType)
         if (this.props.userType.toLowerCase() === 'publisher') {
             this.getPublisherData();
         } else {

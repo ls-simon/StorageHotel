@@ -46,7 +46,6 @@ class AdminUsers extends Component {
         contactInformation: this.state.contactInformation,
         id : this.state.selectedCustomerId
         }
-        console.log(payload)
         
         this.props.updateCustomer(payload)
         window.alert("Kunde opdateret!")
@@ -220,7 +219,6 @@ class AdminUsers extends Component {
 }
 
 const mapStateToProps = (state) =>{
-    console.log(state.firestore.ordered.users);
     
     return{
         users: state.firestore.ordered.users,

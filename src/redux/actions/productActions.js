@@ -1,10 +1,8 @@
 const initState = {selectedProduct: {}}
 
 export const setProductAsSelectedAction = (state = initState) => {
-    console.log(state);
     
     return (dispatch, getState) => {
-        console.log('getState',getState)
 
         dispatch({type: 'SET_PRODUCT_AS_SELECTED', state})
     }
@@ -29,7 +27,6 @@ export const createProductAction = (payload) => {
 
 export const updateProductAction = (payload) => {
     return (dispatch, getState, {getFirebase, getFirestore}) => {
-        console.log(payload);
         
         const firestore = getFirestore()
         firestore.collection("products").doc(payload.id).update({
@@ -47,7 +44,6 @@ export const updateProductAction = (payload) => {
 
 export const deleteProductAction = (id) => {
     return (dispatch, getState, {getFirebase, getFirestore}) => {
-        console.log("Deleting", id)
 
         const firestore = getFirestore()
         

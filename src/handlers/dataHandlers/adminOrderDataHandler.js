@@ -2,7 +2,6 @@
 export const makeOrderLinesData = (selectedOrder, products) => {
     let orderLines = []
     
-    console.log(selectedOrder);
     if (selectedOrder.orderLines) {
         
     selectedOrder.orderLines.forEach((orderLine) => {

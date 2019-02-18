@@ -29,9 +29,6 @@ class UserStock extends React.Component {
             
             const userType = this.props.profile.userType
             const id = this.props.userId
-
-            console.log(this.props.products)
-            console.log(this.props.users)
         
         if (userType === "publisher") {
             this.makeProductsFromPublisher()
@@ -65,7 +62,6 @@ class UserStock extends React.Component {
                }
            })
        })
-       console.log("products :  " + products)
        return products;
     }
 
@@ -108,7 +104,6 @@ class UserStock extends React.Component {
 }
 
 const mapStateToProps = (state) =>{
-    console.log(state)
     return{
         auth: state.firebase.auth,
         userId: state.firebase.auth.uid,

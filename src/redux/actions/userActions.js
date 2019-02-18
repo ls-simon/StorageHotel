@@ -3,16 +3,12 @@ export const updateCustomerAction = (action) => {
         const firestore = getFirestore();
         const firebase = getFirebase();
 
-        console.log(action.payload);
-        
         firebase.auth().currentUser.updateEmail(action.payload.profile.contactInformation.email)
         .then(() => {
-            console.log("GOT HERE", action.payload);
             
             firestore.collection("users").doc(action.payload.id).update({
                 name: action.payload.profile.name, contactInformation: {...action.payload.profile.contactInformation}
               }).then((res)=>{
-                  console.log(res)
                   dispatch({type:"UPDATE_CUSTOMER_SUCCESS", res})
               }).catch((err)=>{
                   dispatch({type:"UPDATE_CUSTOMER_ERROR",err})

@@ -18,8 +18,7 @@ export const createOrder = (order) => {
             
             dispatch({type: 'CREATE_ORDER', order})
         }).catch((err) => {
-            console.log(err);
-            dispatch({type: 'CREATE_ORDER_ERROR'})
+            dispatch({type: 'CREATE_ORDER_ERROR', err})
         })
     }
 }

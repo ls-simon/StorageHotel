@@ -46,7 +46,6 @@ class Home extends React.Component{
 }
 
 const mapStateToProps = (state) =>{
-    console.log("HOME REDUX", state)
     return {
         profile: state.firebase.profile,
         auth: state.firebase.auth

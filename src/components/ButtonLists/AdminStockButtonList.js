@@ -76,7 +76,6 @@ class AdminStockButtonList extends Component {
 
 
 const mapStateToProps = (state) => {
-    console.log(state);
     
     return {
         selectedProduct: state.productReducer.selectedProduct

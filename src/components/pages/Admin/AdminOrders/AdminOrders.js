@@ -97,7 +97,6 @@ class AdminOrders extends Component {
         }
         
         const mapStateToProps = state => {
-            console.log(state);
             
             return {
                 orders: state.firestore.ordered.orders,

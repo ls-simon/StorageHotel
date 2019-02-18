@@ -21,7 +21,6 @@ class AdminProfile extends Component {
     
     
     getCurrentUserInfo() {
-        console.log(this.props.auth);
         
         const currentUser = this.props.users.filter(x => x.id == this.props.auth.uid)[0];
         return currentUser

@@ -48,7 +48,6 @@ class CreateUser extends React.Component{
     onSubmit=(e)=>{
         e.preventDefault();
         let payload = this.state
-        console.log("LOAD",payload);
         
         this.props.signUpCustomer(this.state);
         
@@ -62,11 +61,8 @@ class CreateUser extends React.Component{
 
 
     setSelected = (e) =>{
-        console.log(e.target)
        
-        console.log("NAME",e.target.name)
         const value = e.target.value.toLowerCase()
-        console.log("VALUE",value);
         
         if (value !== 'choose customer') {
             

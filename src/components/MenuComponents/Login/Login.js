@@ -75,7 +75,6 @@ class SignInBox extends React.Component {
 }
 
 const mapStateToProps = (state)=>{
-    console.log(state)
     return {
         error: state.loginReducer.error,
         auth: state.firebase.auth
