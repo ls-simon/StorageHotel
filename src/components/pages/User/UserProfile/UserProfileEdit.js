@@ -11,20 +11,20 @@ class UserProfileEdit extends React.Component {
         super(props);
 
         this.state = {
-            userId: this.props.userId,
-            userName: this.props.user.userName,
-            nickName: this.props.user.nickName,
-            email: this.props.user.email,
-            phoneNumber: this.props.user.phoneNumber,
-            address: this.props.user.address,
-            city:this.props.user.city,
-            zipCode:this.props.user.zipCode,
-            country:this.props.user.country,
+            
+            name: "",
+            email: "",
+            phoneNumber: "",
+            address: "",
+            city:"",
+            zipCode:"",
+            country:"",
+            oldPassword: "",
             passwordNew:"",
             passwordNewRepeat:""}
     };
 
-    onChangeHandler = (event) => {
+    onChange = (event) => {
 
         this.setState({[event.target.name]: event.target.value});
     }
@@ -34,47 +34,9 @@ class UserProfileEdit extends React.Component {
         
         let fields = this.state;
         if (userProfileFieldsAreValidated(fields)) {
-            const usertype= this.props.userType
-            const body = this.makeBodyFromChangedState();
-
-            if (usertype === "PUBLISHER") {
-                put("publishers/"+this.props.userId, body, (response)=>{
-                    this.props.history.push("/User/Profile");
-                })
-            } else if (usertype === "CLIENT") {
-                put("clients/"+this.props.userId, body, (response)=>{
-                    this.props.history.push("/User/Profile");
-                })
+          
             }
-        }
-    }
-
-    makeBodyFromChangedState() {
-
-        let newState = {};
-        const state = this.state;
-        Object.keys(state).forEach((key) => {
-            if(state[key] !=="" && state[key] !== null) {
-                newState[key] = state[key];
-            }
-        })
-
-        newState={...this.state,...newState}
-        const body = {
-            userName:newState.userName,
-            password:newState.passwordNew,
-            userType:newState.userType,
-            contactInformation:{
-                nickName:newState.nickName,
-                email:newState.email,
-                phoneNumber:newState.phoneNumber,
-                city: newState.city,
-                address: newState.address,
-                zipCode: newState.zipCode,
-                country: newState.country
-            }
-        }
-        return body;
+        
     }
 
     render() {
@@ -82,7 +44,7 @@ class UserProfileEdit extends React.Component {
         return(
             <div className="PageStyle customText_b">
                 <div className="frameBordering">
-                    <h1 className="customText_b_big">Edit profile:</h1>
+                    <h1 className="customText_b_big"> profile:</h1>
                     <div className="row">
                         <div className ="col-md-4 offset-md-4">
                             <form onSubmit={this.confirmed}>
@@ -91,25 +53,15 @@ class UserProfileEdit extends React.Component {
                                         <span className="input-group-text" id="basic-addon10">User Name</span>
                                     </div>
                                     <input
-                                        name="userName" 
+                                        name="name" 
                                         type="text" 
                                         className="form-control" 
-                                        onChange={this.onChangeHandler}
-                                        defaultValue={this.props.user.userName} required/>
+                                        onChange={this.onChange}
+                                        defaultValue={this.props.user.name} required/>
 
                                 </div>
 
-                                <div className="input-group mb-2">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text" id="basic-addon9">Nickname</span>
-                                    </div>
-                                    <input 
-                                        name="nickName"
-                                        type="text" 
-                                        className="form-control" 
-                                        onChange={this.onChangeHandler}
-                                        defaultValue={this.props.user.nickName} required/>
-                                </div>
+                                
 
                                 <div className="input-group mb-2">
                                     <div className="input-group-prepend">
@@ -119,7 +71,7 @@ class UserProfileEdit extends React.Component {
                                         name="email" 
                                         type="email" 
                                         className="form-control" 
-                                        onChange={this.onChangeHandler}
+                                        onChange={this.onChange}
                                         defaultValue={this.props.user.email} required/>
                                 </div>
                                 
@@ -131,7 +83,7 @@ class UserProfileEdit extends React.Component {
                                         name="phoneNumber" 
                                         type="tel" 
                                         className="my-2 form-control" 
-                                        onChange={this.onChangeHandler}
+                                        onChange={this.onChange}
                                         defaultValue={this.props.user.phoneNumber} required/>
                                 </div>
 
@@ -143,7 +95,7 @@ class UserProfileEdit extends React.Component {
                                     name="address" 
                                     type="text" 
                                     className="form-control" 
-                                    onChange={this.onChangeHandler}
+                                    onChange={this.onChange}
                                     defaultValue={this.props.user.address} required/>
                                 </div>
 
@@ -155,7 +107,7 @@ class UserProfileEdit extends React.Component {
                                         name="city" 
                                         type="text" 
                                         className="form-control" 
-                                        onChange={this.onChangeHandler}
+                                        onChange={this.onChange}
                                         defaultValue={this.props.user.city} required/>
                                 </div>
                                 
@@ -167,7 +119,7 @@ class UserProfileEdit extends React.Component {
                                         name="zipCode" 
                                         type="text" 
                                         className="form-control" 
-                                        onChange={this.onChangeHandler}
+                                        onChange={this.onChange}
                                         defaultValue={this.props.user.zipCode} required/>
                                 </div>
 
@@ -179,7 +131,7 @@ class UserProfileEdit extends React.Component {
                                         name="country" 
                                         type="text" 
                                         className="form-control" 
-                                        onChange={this.onChangeHandler}
+                                        onChange={this.onChange}
                                         defaultValue={this.props.user.country} required/>
                                 </div>
                                     
@@ -191,7 +143,7 @@ class UserProfileEdit extends React.Component {
                                         name="passwordNew"
                                         type="password" 
                                         className="form-control" 
-                                        onChange={this.onChangeHandler}
+                                        onChange={this.onChange}
                                         placeholder="New password" />
                                 </div>
 
@@ -203,7 +155,7 @@ class UserProfileEdit extends React.Component {
                                         name="passwordNewRepeat" 
                                         type="password" 
                                         className="form-control" 
-                                        onChange={this.onChangeHandler}
+                                        onChange={this.onChange}
                                         placeholder="New password repeat" />
                                     </div>
                                 <div className="newForm stockForm">

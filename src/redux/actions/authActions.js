@@ -29,7 +29,7 @@ export const signIn = (credentials) =>{
             const firebase = getFirebase();
             const firestore = getFirestore();
             const publisher = payload.userType == 'publisher' ? 'self' : getPublisher(payload.selectedActorId, firestore)
-
+            
             firebase.auth().createUserWithEmailAndPassword(
                 payload.email,
                 payload.password
@@ -54,15 +54,16 @@ export const signIn = (credentials) =>{
                 })
             }
         }
-
-       export const getPublisher = (actor, firestore) => {
-
-        if (actor == 'INDEPENDENT_CLIENT') {
-            return 'Uafhængig kunde'
-        } else {
-            return firestore.collection("users").doc(actor)
-        }
-    
+        
+        
+        export const getPublisher = (actor, firestore) => {
+            
+            if (actor == 'INDEPENDENT_CLIENT') {
+                return 'Uafhængig kunde'
+            } else {
+                return firestore.collection("users").doc(actor)
+            }
+            
         }
         
         export const signUpEmployeeAction = (payload) =>{

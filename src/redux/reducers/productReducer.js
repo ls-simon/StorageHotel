@@ -1,6 +1,6 @@
 const initialState ={};
 
-const loginReducer = (state = initialState, action) => {
+const productReducer = (state = initialState, action) => {
     
     switch(action.type){
         case "DELETE_ADRESS":
@@ -25,4 +25,4 @@ const loginReducer = (state = initialState, action) => {
     return state
 }
     
-export default loginReducer;
+export default productReducer;

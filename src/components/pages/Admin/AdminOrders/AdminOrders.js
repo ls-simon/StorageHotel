@@ -106,15 +106,11 @@ class AdminOrders extends Component {
                 selectedOrder: state.orderReducer.selectedOrder
             } 
         }
-        const mapDispatchToProps = (dispatch) => {
-            return {
-                setSelectedOrder: (payload) => dispatch(setSelectedOrderAction(payload))
-            }
-        }
+ 
         
         
         export default compose(
-            connect(mapStateToProps, mapDispatchToProps), 
+            connect(mapStateToProps, null), 
             firestoreConnect(
                 [
                     {collection: 'orders'},

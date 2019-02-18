@@ -4,15 +4,13 @@ import ReactTable from 'react-table';
 import {connect} from "react-redux";
 import {firestoreConnect} from 'react-redux-firebase';
 import {compose} from "redux";
-import {Redirect} from "react-router-dom";
-import {makeProductsData} from '../../../handlers/dataHandlers.js';
+import {Redirect, withRouter} from "react-router-dom";
+
 import {itemPreviouslyAddedWarning, userNotFoundWarning, amountIsNotANumberWarning, 
         amountExceedingQuantityWarning, amountIsZeroWarning, itemNotChosenWarning, 
         customerIsNotSelectedWarning} from '../../../handlers/exceptions.js';
 import { getColumnsFromArray } from '../../../handlers/columnsHandlers.js';
-import { get } from '../../../handlers/requestHandlers';
-import Dropdown from "../../MenuComponents/Dropdown/Dropdown";
-import {makeCustomerData} from "../../../handlers/dataHandlers";
+
 
 
 //TODO: Render warning in previouslyAddedWarning
@@ -46,26 +44,33 @@ class UserOrder extends React.Component {
     }
 
  
-
+    componentWillReceiveProps() {
+     this.filterStock()   
+    }
     
     addSelectedToOrderLine = () => {
+       let userType = this.props.profile.userType.toLowerCase()
+       let selected = this.state.selected
 
-        if(this.state.selected!==null){
+        if (selected) {
             let newLine = {}
-            let userType = this.state.userType.toLowerCase();
+           
+             userType === 'employee' ? newLine = this.state.filteredStock[this.state.selected] : newLine = this.props.products[this.state.selected];
 
-            userType === 'employee' ? newLine = this.state.filteredStock[this.state.selected] : newLine = this.props.products[this.state.selected];
-
-            if (this.state.orderLines.some(orderLine => orderLine.productId === newLine.productId)) {
+            if (this.state.orderLines.some(orderLine => orderLine.product.id === newLine.product.id)) {
+            
                 itemPreviouslyAddedWarning();
             } else {
+            
                 if (newLine.amount !== 0) {
                 this.setState({orderLines: [...this.state.orderLines, newLine],numberOfItems:this.state.numberOfItems+1}); 
             } else {
+            
                 amountIsZeroWarning();
                }
             }
         } else {
+            
             itemNotChosenWarning();
         }
       }
@@ -149,71 +154,45 @@ class UserOrder extends React.Component {
         );
     };
 
-
-    createNavBar = () =>{
-
-        let navbar = null;
-        if(this.props.userType==="EMPLOYEE"){
-            navbar = (
-                <nav className="navbar navbar-light bg-light">                   
-                    <form className = "form-inline">
-                        <button className="btn std_BTN my-2 my-sm-0" onClick={this.changeToCart}>Go to cart <span class="badge badge-light">{this.state.numberOfItems}</span></button>
-                    </form>
-                    <div className="input-group mb-3">
-                        <div className="input-group-prepend">
-                            <span htmlFor="dropdown" className="input-group-text" id="basic-addon1">Create order for:</span>
-                        </div>
-                        <Dropdown actors={this.state.customers} action={this.setSelectedUser}/>
-                    </div>
-                </nav> 
-                )
-        } else {
-            navbar = (
-                <nav className="navbar navbar-light bg-light">                   
-                    <form className = "form-inline">
-                        <button className="btn  std_BTN my-2 my-sm-0" onClick={this.changeToCart}>Go to cart <span class="badge badge-light">{this.state.numberOfItems}</span></button>
-                    </form>       
-                </nav> 
-            )
-        }
-
-        return navbar;
-    }
-
-    setSelectedUser = (e) => {
-
-        if(e.target.value.toLowerCase()!=="choose customer"){    
-            this.setState({userSelectedId:e.target.value},()=>{
-                this.setState({userSelectedType:this.state.customers.find(x=>x.id===this.state.userSelectedId).userType},() => {
-                    this.filterStock();
-                })
-            })
-        } else {
-            window.alert("That is not a valid user")
-        }
-    }
-
     filterStock() {
 
         let uid = this.props.auth.uid;
-        let userType = this.props.userType.toLowerCase();
-
-        let filteredStock = this.props.products.filter(x=>x.ownerRef.id===uid);
-        const customer = this.state.customers.filter(x=>x.id===uid)[0];
-
-        if (userType === 'publisher') {
-            if (customer.clients) {
-                customer.clients.forEach((client) => {
-                   let clientsProducts = this.props.products.filter(x=>x.ownerRef.id===client.id);                    
-                   filteredStock.push(...clientsProducts);
-                }) 
-            }
+        let userType = this.props.profile.userType.toLowerCase()
+        let filteredStock = [];
+        
+        switch(userType) {
+            case 'employee':
+                filteredStock = this.fetchAllProducts(uid);
+            case 'client':
+                filteredStock = this.fetchUserSpecificProducts(uid)
+            case 'publisher':
+                filteredStock = this.fetchUserSpecificProducts(uid)
+                filteredStock.push(...this.fetchClientsProducts(uid))
+            default:
+                window.alert("Error in fething user information")
+                this.props.history.push('/')
         }
-
-        this.setState({filteredStock: filteredStock})
+     
+        
+       this.setState({filteredStock: filteredStock})
     }
 
-    render(){
+    fetchAllProducts = () => {
+        return this.props.products
+    }
+
+    fetchUserSpecificProducts(uid) {
+        return this.props.products.filter(x=>x.ownerRef.id===uid);
+    }
+    fetchClientsProducts = (uid) => {
+        const clients = this.props.users.filter((x)=> x.userType.toLowerCase() == 'client')
+        const currentPublishersClients = clients.filter((x) => x.publisher.include(uid))
+        currentPublishersClients.forEach((client) => {
+        return this.props.products.filter((x) => x.ownerRef.include(client.id))
+    }) 
+}
+
+    render() {
 
         if(!this.props.auth.uid){
             return <Redirect to="/"/>
@@ -228,22 +207,20 @@ class UserOrder extends React.Component {
             "Quantity", 
             "Owner"]);
         columns[2].Cell = this.renderEditable;
-
+        
         return(
             <div className="PageStyle customText_b">
                 <div className="frameBordering">
                     <nav className="navbar navbar-light bg-light"> 
-                        <h2 className=" customText_b_big "> Order:</h2>
+                        <h2 className=" customText_b_big "> Vælg produkter:</h2>
                     </nav> 
-
-                    {this.createNavBar()}        
                     
                     <div className="table">
                         <div className="SideBar col rounded">
                             <div className="col-my-auto">
                                     <div className="OrderList">
                                         <ReactTable  
-                                        data={this.state.filteredStock ? this.state.filteredStock : data} 
+                                        data={this.state.filteredStock ? this.state.filteredStock : []} 
                                         columns={columns} 
                                         showPagination={false} 
                                         className="-striped -highlight"
@@ -294,7 +271,7 @@ class UserOrder extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-    console.log(state);
+    
     
     return{
 
@@ -302,7 +279,8 @@ const mapStateToProps = (state) => {
         profile: state.firebase.profile,
         userType: state.firebase.profile.userType, 
         userId: state.loginReducer.userId,
-        products: state.firestore.ordered.products   
+        products: state.firestore.ordered.products,
+        users: state.firestore.ordered.users 
     }
 }
 
@@ -314,10 +292,11 @@ const mapDispatchToProps = (dispatch) =>{
     }
 }
 
-export default compose(
+export default withRouter(compose(
     connect(mapStateToProps, mapDispatchToProps), 
     firestoreConnect(
         [
-            {collection: 'products'}
-        ]))(UserOrder)
+            {collection: 'products'},
+            {collection: 'users'}
+        ]))(UserOrder))
 

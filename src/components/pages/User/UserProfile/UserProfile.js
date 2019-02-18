@@ -1,118 +1,212 @@
-import React from 'react';
+import React, {Component} from 'react';
 import "../../Pages.css";
 import { connect } from "react-redux";
-import { Redirect } from "react-router-dom";
-import {get} from "./../../../../handlers/requestHandlers";
 
-class UserProfile extends React.Component{
+import { withRouter, Redirect } from "react-router-dom";
+import {updateCustomerAction} from './../../../../redux/actions/userActions'
+class UserProfile extends Component{
     
     constructor(props){
         super(props);
-
-        this.state= {
-            userName: "...Loading",
-            name: "...Loading",
-            email: "...Loading",
-            phoneNumber: "...Loading",
-            address: "...Loading",
-            city: "...Loading",
-            zip: "...Loading",
-            country:"...Loading"
+        
+        this.state = {
+            name: "",
+            email: "",
+            phoneNumber: "",
+            address: "",
+            city: "",
+            zipCode: ""
         }
     }
-  
-    componentDidMount(){
+    onSubmit = (e) => {
+        e.preventDefault();
+        
+      
+        let state = this.state
+        let props = this.props.profile.contactInformation
 
-        const type = this.props.userType
-        if(type === "CLIENT"){
-            get("clients/"+this.props.userID,(res)=>{
-                this.setStateOnGetRequest(res)
-            })   
-        } else if(type === "PUBLISHER") {
-            get("publishers/"+this.props.userID,(res)=>{
-                this.setStateOnGetRequest(res)
-            })   
-        } else {alert("Something went horribly wrong.")}
+        const payload = this.prepCustomerInfoDoc(state, props);
+       
+        
+        this.props.updateCustomer(payload)
+        // this.props.history.push('/Home')
     }
 
-    setStateOnGetRequest = (data) =>{
+    prepCustomerInfoDoc = (state, props) => {
+        
+        
+        if (!state.name || state.name === "") {
+            state.name = this.props.profile.name
+        }
+        
+        let requiredFields = Object.keys(props);
 
-        this.setState({
-            userName:data.userName, 
-            name: data.contactInformation.nickName, 
-            email: data.contactInformation.email,
-            phoneNumber:data.contactInformation.phoneNumber,
-            address:data.contactInformation.address,
-            city:data.contactInformation.city,
-            zip:data.contactInformation.zipCode,
-            country:data.contactInformation.country,
+        requiredFields.forEach((key) => {
+
+            !state[key] ? state[key] = props[key] : state[key] = state[key]
         })
+        
+        return {
+            id: this.props.auth.uid,
+            profile: {
+                name:  state.name,
+            contactInformation: {
+                phoneNumber: state.phoneNumber,
+                address: state.address,
+                city: state.city,
+                zipCode: state.zipCode,
+                email: state.email
+            }
+            }
+        }
     }
 
-    prepForEdit = () =>{
+    onChange = (event) => {
 
-        this.props.setAddress(this.state.address);
-        this.props.setCity(this.state.city);
-        this.props.setCountry(this.state.country);
-        this.props.setEmail(this.state.email);
-        this.props.setNickName(this.state.name);
-        this.props.setPhoneNumber(this.state.phoneNumber);
-        this.props.setUserName(this.state.userName);
-        this.props.setZipcode(this.state.zip);
-        this.props.history.push("/User/Profile/Edit")
+        this.setState({[event.target.name]: event.target.value});
     }
 
     render(){
-
+        
         if(!this.props.auth.uid){
             return <Redirect to="/"/>
         }
-
-        return(
-            <div className="PageStyle customText_b">
+        
+        if (this.props.profile) {
+            
+            return(
+                <div className="PageStyle customText_b">
                 <div className="frameBordering">
-                    <h1 className="text-center">Profile information</h1>
-                    <div className="row">
-                        <div className="Container col-md-4 offset-md-4">
-                            <h5 className="text-justify my-2">USERNAME: {this.state.userName}</h5>
-                            <h5 className="text-justify my-2">NAME: {this.state.name}</h5>
-                            <h5 className="text-justify my-2">EMAIL: {this.state.email}</h5>
-                            <h5 className="text-justify my-2">PHONE NUMBER: {this.state.phoneNumber}</h5>
-                            <h5 className="text-justify my-2">ADDRESS: {this.state.address}</h5>
-                            <h5 className="text-justify my-2">CITY: {this.state.city}</h5>
-                            <h5 className="text-justify my-2">ZIP: {this.state.zip}</h5>
-                            <h5 className="text-justify my-2">COUNTRY: {this.state.country}</h5>
+                
+                <ul class="list-group list-group-flush">
+                <li class="list-group-item disabled">Navn</li>
+                <li class="list-group-item">{this.props.profile.name}</li>
+                <li class="list-group-item disabled">Email</li>
+                <li class="list-group-item">{this.props.profile.contactInformation.email}</li>
+                <li class="list-group-item disabled">Phone number</li>
+                <li class="list-group-item">{this.props.profile.contactInformation.phoneNumber}</li>
+                <li class="list-group-item disabled">Address</li>
+                <li class="list-group-item">{this.props.profile.contactInformation.address}</li>
+                <li class="list-group-item disabled">City</li>
+                <li class="list-group-item">{this.props.profile.contactInformation.city}</li>
+                <li class="list-group-item disabled">Zip code</li>
+                <li class="list-group-item">{this.props.profile.contactInformation.zipCode}</li>
+                </ul>
+                
+                
+                <div className="Container col-md-4 offset-md-4">
+                <p className="h2">Redigér profil:</p><br></br></div>
+            
+                <form onSubmit={this.onSubmit}>
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon10">User Name</span>
+                                    </div>
+                                    <input
+                                        name="name" 
+                                        type="text" 
+                                        className="form-control" 
+                                        onChange={this.onChange}
+                                        defaultValue={this.props.profile.name} required/>
 
-                            <button onClick={this.prepForEdit} className="btn-lg btn-block yellow_BTN my-2k btn">Edit</button>
-                        </div>
-                    </div>
+                                </div>
+
+                                
+
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon8">Email</span>
+                                    </div>
+                                    <input
+                                        name="email" 
+                                        type="email" 
+                                        className="form-control" 
+                                        onChange={this.onChange}
+                                        defaultValue={this.props.profile.contactInformation.email} required/>
+                                </div>
+                                
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon7">Telefonnummer</span>
+                                    </div> 
+                                    <input
+                                        name="phoneNumber" 
+                                        type="tel" 
+                                        className="my-2 form-control" 
+                                        onChange={this.onChange}
+                                        defaultValue={this.props.profile.contactInformation.phoneNumber} required/>
+                                </div>
+
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon6">Adresse</span>
+                                    </div>
+                                <input
+                                    name="address" 
+                                    type="text" 
+                                    className="form-control" 
+                                    onChange={this.onChange}
+                                    defaultValue={this.props.profile.contactInformation.address} required/>
+                                </div>
+
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon5">By</span>
+                                    </div>
+                                    <input
+                                        name="city" 
+                                        type="text" 
+                                        className="form-control" 
+                                        onChange={this.onChange}
+                                        defaultValue={this.props.profile.contactInformation.city} required/>
+                                </div>
+                                
+                                <div className="input-group mb-2">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon4">Postnummer</span>
+                                    </div>
+                                    <input
+                                        name="zipCode" 
+                                        type="text" 
+                                        className="form-control" 
+                                        onChange={this.onChange}
+                                        defaultValue={this.props.profile.contactInformation.zipCode} required/>
+                                </div>
+                                <div className="newForm stockForm">
+                                    <button className="btn btn-block yellow_BTN my-2" type="submit">Godkend og redigér</button>
+                                </div> 
+                            </form> 
+                </div>              
                 </div>
-            </div>
-        );
-    }
-}
- 
-const mapStateToProps = (state) => {
-
-    return {
-        auth: state.firebase.auth,
-        userID: state.loginReducer.userId,
-        userType: state.loginReducer.userType
-    }
-}
-
-const mapDispatchToProps = (dispatch) => {
-
-    return {
-        setNickName: (nickName) => {dispatch({type: "SET_PROFILE_NICKNAME",payload: {nickName}})},
-        setUserName: (userName) => {dispatch({type: "SET_PROFILE_USERNAME",payload: {userName}})},
-        setEmail: (email) => {dispatch({type: "SET_PROFILE_EMAIL",payload: {email}})},
-        setPhoneNumber: (phoneNumber) => {dispatch({type: "SET_PROFILE_PHONENUMBER",payload: {phoneNumber}})},
-        setAddress: (address) => {dispatch({type: "SET_PROFILE_ADDRESS",payload: {address}})},
-        setZipcode: (zipCode) => {dispatch({type: "SET_PROFILE_ZIPCODE",payload: {zipCode}})},
-        setCity: (city) => {dispatch({type: "SET_PROFILE_CITY",payload: {city}})},
-        setCountry: (country) => {dispatch({type: "SET_PROFILE_COUNTRY",payload: {country}})},
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(UserProfile)
+                
+                );
+            } else {
+                return (
+                    <h1>Vent venligst..</h1>
+                    )
+                }
+            }
+        }
+        
+        const mapStateToProps = (state) => {
+            console.log(state);
+            
+            return {
+                auth: state.firebase.auth,
+                userID: state.loginReducer.userId,
+                userType: state.loginReducer.userType,
+                profile: state.firebase.profile
+            }
+        }
+        
+        const mapDispatchToProps = (dispatch) => {
+            
+            return {
+                updateCustomer: (payload) => {dispatch(updateCustomerAction({type: "UPDATE_PROFILE",payload: payload}))},
+            }
+        }
+        
+        export default withRouter(
+            connect(mapStateToProps,mapDispatchToProps) 
+            (UserProfile))
+            

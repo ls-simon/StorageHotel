@@ -9,7 +9,7 @@ const initialState = {
     country:"",
 }
 
-const loginReducer = (state = initialState, action) => {
+const profileReducer = (state = initialState, action) => {
     
     switch(action.type){
         case "SET_PROFILE_NICKNAME":
@@ -27,4 +27,4 @@ const loginReducer = (state = initialState, action) => {
     return state;
 }
 
-export default loginReducer;
+export default profileReducer;

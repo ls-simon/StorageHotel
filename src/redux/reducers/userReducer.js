@@ -6,7 +6,9 @@ const userReducer = (state = initState, action) => {
         console.log('customer updated', action.payload)
         return state
        case 'UPDATE_CUSTOMER_ERROR':
-       console.log('error in updating customer', action.payload) 
+       console.log('error in updating customer', action.payload)
+       case 'CUSTOMER_INFO_SUCCESS':
+        return {...state, currentUserInfo: action.payload}
        default: 
    }
     return state
