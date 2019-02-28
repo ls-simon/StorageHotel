@@ -10,10 +10,9 @@ import "./AdminOrders.css";
 import {allProductsNotPackedWarning} from "./../../../../handlers/exceptions.js";
 import {packListPDF, orderNotePDF} from "./../../../../handlers/pdfHandlers.js"
 import {getColumnsFromArray} from "./../../../../handlers/columnsHandlers.js"
-import {setSelectedOrderAction} from './../../../../redux/actions/orderActions';
-import { makeOrderLinesData } from '../../../../handlers/dataHandlers/adminOrderDataHandler';
 import ClickTable from '../../../ReactTables/ClickTable'
 import CheckBoxTable from '../../../ReactTables/CheckBoxTable'
+import {deleteOrderAction} from './../../../../redux/actions/orderActions'
 class AdminOrders extends Component {
     
     constructor(props) {
@@ -36,15 +35,14 @@ class AdminOrders extends Component {
                 e.preventDefault()
             }
             
-            deleteOrder = (e) => {    
-                e.preventDefault()        
+            deleteOrder = () => {    
+                this.props.deleteOrder(this.props.selectedOrder.id)    
             }
             
             goToEdit = (event) =>{
                 event.preventDefault();
-                if(this.state.selectedItem !== null){
-                    this.props.setSelectedOrder(this.state.orders[this.state.selected]);
-                    this.props.history.push("/Admin/Orders/Edit/"+this.state.selectedId)
+                if(this.props.selectedOrder.id){
+                    this.props.history.push("/Admin/Orders/Edit/")
                 } else {
                     window.alert("Please select an order to edit.")
                 }
@@ -58,11 +56,12 @@ class AdminOrders extends Component {
                     return <Redirect to="/"/>
                 }
 
+
                 const orderColumns = getColumnsFromArray(["Owner Name", "Date", "Order Id"]);
-                let checkBoxTableColumns = getColumnsFromArray(["Product Id", "Product Name", "Amount"]);
+                const checkBoxTableColumns = getColumnsFromArray(["Product Id", "Product Name", "Amount"]);
                 
-                if (this.props.orders && this.props.products) {
-                    
+                if (this.props.orders, this.props.products) {
+                  
                 return (
                     <div className="PageStyle AdminOrderFontMinimize customText_b">
                     <div className="frameBordering">
@@ -80,7 +79,7 @@ class AdminOrders extends Component {
                 
                 <div className="AdminOrderRight">
                 <div className="Table rightReactTableAdminOrder">
-                <CheckBoxTable columns={checkBoxTableColumns} orderLines={this.state.orderLines} products={this.props.products}/>
+                <CheckBoxTable columns={checkBoxTableColumns} products={this.props.products}/>
                 <div className="  px-1">
                 </div>
                 </div> 
@@ -102,14 +101,19 @@ class AdminOrders extends Component {
                 orders: state.firestore.ordered.orders,
                 products: state.firestore.ordered.products,
                 auth: state.firebase.auth,
-                selectedOrder: state.orderReducer.selectedOrder
+                selectedOrder: state.orderReducer.selectedOrder,
+                users: state.firestore.ordered.users
             } 
         }
  
-        
+        const mapDispatchToProps = (dispatch) => {
+            return {
+                deleteOrder: (id) => dispatch(deleteOrderAction(id))
+            }
+        }
         
         export default compose(
-            connect(mapStateToProps, null), 
+            connect(mapStateToProps, mapDispatchToProps), 
             firestoreConnect(
                 [
                     {collection: 'orders'},

@@ -8,7 +8,7 @@ const Dropdown = (props) =>{
         return(
             <option 
             key={i}
-            value={actor.id}
+            value={actor.id+'&'+actor.name}
             name={actor.name}
             usertype={actor.userType}>
             {actor.name} - {actor.userType}
@@ -17,10 +17,10 @@ const Dropdown = (props) =>{
     })
     return(
         <select className="custom-select form-control" id="dropdown" onChange={action}>
-            <option>Choose Customer</option>
+            <option>Vælg kunde</option>
             {actorList}
         </select>  
     )
 }
-
+//Pass chosen actor to navbar or work around
 export default Dropdown

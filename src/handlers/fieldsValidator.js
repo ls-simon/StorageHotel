@@ -96,7 +96,6 @@ export function userProfileFieldsAreValidated(fields) {
                 if (isUserNameValid(fields.userName)) {
                     if (isEmailValid(fields.email)) {
                         if (isPhoneValid(fields.phoneNumber)) {
-                            if (isCountryValid(fields.country)) {
                                 if (isNickNameValid(fields.nickName)) {
                                     if (fields.passwordNew && fields.passwordNewRepeat) {
                                         if (isPasswordValid(fields.passwordNew, fields.passwordNewRepeat)) {
@@ -106,7 +105,7 @@ export function userProfileFieldsAreValidated(fields) {
                                         return true;
                                     }
                                 }
-                            }    
+                            
                         }
                     }
                 }
@@ -122,11 +121,10 @@ export function isOrderAddressValid(fields) {
         if (isCityValid(fields.city)) {
             if (isZipCodeValid(fields.zipCode)) {
                 if (isPhoneValid(fields.phone)) {
-                    if (isCountryValid(fields.country)) {
                         if (isContactPersonValid(fields.contact)) {
                             return true;
                         }
-                    }
+                    
                 }
             }
         }
@@ -213,15 +211,7 @@ export function isPhoneValid(phone) {
     }
 }
 
-export function isCountryValid(country) {
 
-    if (country.match(/\w*/)) {
-        return true;
-    } else {
-        fieldInvalidWarning({country});
-        return false;
-    }
-}
 
 export function isPasswordValid(password, retypedPassword) {
 

@@ -38,7 +38,6 @@ class CheckBoxTable extends Component {
             id: "checkbox",
             accessor: "",
             Cell: ({ original }) => {
-                console.log("cell original", original);
                 
                 return (
                     <input
@@ -71,18 +70,16 @@ class CheckBoxTable extends Component {
             toggleRow (productName) {
                 
                 const packedItem = Object.assign({}, this.state.packed);
-                console.log(packedItem);
                 
-                packedItem[productName] = !this.state.packed[productName];
-                this.setState({
-                    packed: packedItem,
-                    selectAll: 2
-                });
+                packedItem[productName] = !this.state.packed[productName]
+                    this.setState({
+                        packed: packedItem,
+                        selectAll: 2
+                    });
             }
 
             setOrderLinesAsSelected() {
                 if (this.props.products, this.props.selectedOrder) {
-                    console.log(this.props.products, this.props.selectedOrder)
                     let orderLines = makeOrderLinesData(this.props.selectedOrder, this.props.products)
                     return orderLines
                     

@@ -2,9 +2,8 @@ import React from 'react';
 import "./Order.css";
 import "./Cart.css";
 import { connect } from "react-redux";
-import {makeOrderBodyFromData} from "../../../handlers/bodyHandlers";
-import { post } from '../../../handlers/requestHandlers';
-import {Redirect} from "react-router-dom";
+import {Redirect, withRouter} from "react-router-dom";
+import {createOrderAction} from './../../../redux/actions/orderActions'
 
  class UserCartConfirm extends React.Component {
 
@@ -21,34 +20,26 @@ import {Redirect} from "react-router-dom";
 
     confirmed = (event) => {
 
-        let orderLines = this.props.orderLines;
-        const data = makeOrderBodyFromData(orderLines, this.props.address);
-
-        let userId = this.props.employeeUser.userId ? this.props.employeeUser.userId : this.state.userId;
-        let userType = this.props.employeeUser.userType ? this.props.employeeUser.userType.toLowerCase() : this.state.userType;
-        let path = userType === 'employee' ? '/Admin/' : '/User/';
-              
-        post('orders/'+userId+'/'+userType, data, (response) => {
-
-            if(response.includes("Created!")){
-                
-                this.props.history.push(path+'Order/Success')
-            } else {
-                
-                this.props.history.push(path+'Order/Failed')
-
-                }
-            });
-        
+        const {newOrder, history, createOrder} = this.props
+        let payload = this.constructOrder(newOrder)
+        createOrder(payload)
     }
  
-    goBack = () =>{
+    constructOrder = (newOrder) => {
 
-        if(this.props.userType==="EMPLOYEE"){
-            this.props.history.push("/Admin/Order/Cart")
-        } else {
-            this.props.history.push("/User/Order/Cart")
+        return {
+            date: new Date(),
+            ownerRef: newOrder.selectedCustomer.id,
+            ownerName: newOrder.selectedCustomer.name,
+            orderLines: newOrder.orderLines.map((line) => {return {
+                amount: line.amount,
+                productRef: line.product.id
+            }}),
+            address: this.props.address
         }
+    }
+    goBack = () =>{
+            this.props.history.push("/Home")
     }
 
     render(){
@@ -58,14 +49,16 @@ import {Redirect} from "react-router-dom";
         }
 
         const address = this.props.address;
+        if (this.props.newOrder) {
+
         
-        let lines = this.props.orderLines;
+        let lines = this.props.newOrder.orderLines;
         
         if (lines !== undefined) {
         lines = lines.map((line, i)=>{return(
                 <tr key={i}>
-                    <th scope="row">{line.productId}</th>
-                    <td>{line.productName}</td>
+                    <th scope="row">{line.product.productId}</th>
+                    <td>{line.product.productName}</td>
                     <td>{line.amount}</td>
                 </tr>
             )});
@@ -111,13 +104,11 @@ import {Redirect} from "react-router-dom";
                             <label className="customText_b">{address.address}</label>
                             <br/>
                             <label className="customText_b_bold">Zip: </label>
-                            <label className="customText_b">{address.zip}</label>
+                            <label className="customText_b">{address.zipCode}</label>
                             <br/>
-                            <label className="customText_b_bold">City</label>
+                            <label className="customText_b_bold">City: </label>
                             <label className="customText_b">{address.city}</label>
                             <br/>
-                            <label className="customText_b_bold">Country: </label>
-                            <label className="customText_b">{address.country}</label>
                             
                             <div onClick={this.confirmed} className="green_BTN btn-block my-3 btn" role="button">Confirm order</div>
                         
@@ -127,19 +118,29 @@ import {Redirect} from "react-router-dom";
                 </div>        
             </div>
         );
+    } else {
+        return (<h1>Vent venligst..</h1>)
     }
+    
+    }
+
 }
 
-const mapStateToProps = (state)=>{
+    const mapStateToProps = (state)=>{
 
-    return{
+    return {
         auth: state.firebase.auth,
-        orderLines: state.orderReducer.orderLines,
-        employeeUser:state.orderReducer.customer,
+        newOrder: state.orderReducer.newOrder,
         address: state.addressReducer,
         userType: state.loginReducer.userType,
         userId: state.loginReducer.userId
     }
 }
 
-export default connect(mapStateToProps)(UserCartConfirm);
+    const mapDispatchToProps = (dispatch) => {
+        return {
+          createOrder: (payload) => dispatch(createOrderAction(payload))
+        }
+    }
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UserCartConfirm));

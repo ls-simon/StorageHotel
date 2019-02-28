@@ -47,8 +47,8 @@ ReactDOM.render(
                 <Route exact path="/Admin/*" component={adminMain}/>
                 <Route exact path="/Admin/Orders" component={AdminOrders}/>
                 <Route exact path="/Admin/Orders/New" component={Order}/>
-                <Route exact path="/Admin/Orders/Edit/:id" component={EditOrder}/>
-                <Route exact path="/Admin/Orders/Edit/OrderAddress/:id" component={EditOrderAddress}/>
+                <Route exact path="/Admin/Orders/Edit/" component={EditOrder}/>
+                <Route exact path="/Admin/Orders/Edit/OrderAddress/" component={EditOrderAddress}/>
                 <Route exact path="/Admin/Order" component={AdminOrder}/>
                 <Route exact path="/Admin/Order/Cart" component={OrderCart}/>
                 <Route exact path="/Admin/Order/Cart/Confirm" component={CartConfirm}/>

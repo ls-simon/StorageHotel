@@ -10,9 +10,12 @@ class ClickTable extends Component {
         this.state = { selected: null};
     }
 
+  
 
     render() {
-        var {data, columns} = this.props
+        var {columns, data} = this.props
+
+        
         return(
             <ReactTable
                             data={data} 

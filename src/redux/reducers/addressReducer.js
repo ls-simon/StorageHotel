@@ -4,8 +4,7 @@ const initialState ={
     phoneNumber:"", 
     address:"", 
     zipCode:"",
-    city:"",
-    country:""
+    city:""
 };
 
 const addressReducer = (state = initialState, action) => {
@@ -17,7 +16,6 @@ const addressReducer = (state = initialState, action) => {
         case "SET_ADDRESS":
         case "SET_ZIP":
         case "SET_CITY":
-        case "SET_COUNTRY":
             state = {...state, ...action.payload}               
             break;
         case "DELETE_ADRESS":

@@ -18,20 +18,14 @@ class EditOrder extends Component{
             stock: [],
             order: {},
             userType: "",
-            userHexId: "",
-            selectedOrderLine: -1,
+            selectedOrderLineNumber: -1,
             selectedOrderLine: {productName: "Nothing Chosen", productId: "Nothing Chosen",quantity:"Nothing Chosen"}
         }
     }
 
-    componentDidMount() {   
-
-        this.setState({order: this.props.order, orderLines: this.props.order.orderLines});
-    }
-
     onChangeHandler = (e) =>{
 
-        let orderLines = this.state.orderLines;
+        let orderLines = this.props.selectedOrder.orderLines;
         orderLines[this.state.selectedOrderLineNumber].amount = e.target.value;
        
         this.setState({orderLines: orderLines});
@@ -123,20 +117,21 @@ class EditOrder extends Component{
 
     onEditAddress = (e) => {
         e.preventDefault();  
-
-        this.props.history.push("/Admin/Orders/Edit/OrderAddress/"+this.state.order.hexId);
+        //map address
+        this.props.history.push("/Admin/Orders/Edit/OrderAddress/");
     }
 
     render() {
 
         let orderLineColumns = getColumnsFromArray(["Product Name", "Product Id", "Amount", "Quantity"]);
-        
+        if (this.props.order) {
+            
         return (
             <div className="PageStyle customText_b">
                 <div className="frameBordering">
                     <div className="EditOrderLeft">
                         <ReactTable 
-                            data={this.state.order.orderLines}
+                            data={this.props.order.orderLines}
                             columns={orderLineColumns}
                             showPagination={false}
                             className="editOrderColor -striped -highlight"
@@ -181,7 +176,7 @@ class EditOrder extends Component{
                                     <div className="input-group-prepend">
                                         <label className="input-group-text" htmlFor="amount" id="Item3">Amount</label> 
                                     </div>
-                                    <input id="amount" className="form-control" type="number" name="amount" onChange={this.onChangeHandler} defaultValue={this.state.selectedOrderLine.amount} placeholder="Amount ordered" required/>
+                                    <input id="amount" className="form-control" type="number" name="amount" onChange={(e)=> {this.onChangeHandler(e)}} defaultValue={this.state.selectedOrderLine.amount} placeholder="Amount ordered" required/>
                                 </div>
 
                                 <div className="input-group my-2">
@@ -201,12 +196,17 @@ class EditOrder extends Component{
                 </div>       
             </div>                        
         )
+
+    } else { return (<h1>Vent venligst..</h1>)}
     }
 }
 
 const mapStateToProps = (state) => {
-
-    return  {order: state.orderReducer.selectedOrder }
+    return  {
+        order: state.orderReducer.selectedOrder
+    }
 }
 
 export default connect(mapStateToProps)(EditOrder)
+
+// Product and selectedOrder with productRefs needs to be combined
