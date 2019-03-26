@@ -31,12 +31,12 @@ class AdminOrders extends Component {
     showOrderLines = (rowInfo) => {     
     }
             
-            finishOrder = (e) => { 
+            finishOrder = (e) => {  
                 e.preventDefault()
             }
             
             deleteOrder = () => {    
-                this.props.deleteOrder(this.props.selectedOrder.id)    
+                this.props.deleteOrder(this.props.selectedOrder)    
             }
             
             goToEdit = (event) =>{
@@ -46,6 +46,30 @@ class AdminOrders extends Component {
                 } else {
                     window.alert("Please select an order to edit.")
                 }
+            }
+
+            constructPackListData = () => {
+                const {selectedOrder} = this.props
+                let products = [...this.props.products]
+                var packListData = {...selectedOrder, orderLines: [...selectedOrder.orderLines]}
+                console.log(packListData);
+                var ex = {}
+                console.log(Object.isExtensible(ex))
+                console.log(Object.isExtensible({...selectedOrder}))
+                console.log(Object.isExtensible(packListData.orderLines));
+                
+
+                console.log(products);
+                
+                packListData.orderLines.forEach((o)=> {
+                    console.log(o);
+                    o.product = products.filter(x=> {
+                        console.log("hmm")
+                        return x.id === o.productRef.id 
+                    })
+                })
+                
+                return packListData
             }
             
             
@@ -83,7 +107,11 @@ class AdminOrders extends Component {
                 <div className="  px-1">
                 </div>
                 </div> 
-                <button type= "button" className="AdinOrderButtonSizer btn std_BTN mx-2" onClick={()=>packListPDF(this.state.selectedItem)} >Export order</button> 
+                <button type= "button" className="AdinOrderButtonSizer btn std_BTN mx-2" onClick={(e)=> {
+                    e.preventDefault()
+                    const packListData = this.constructPackListData();
+                    packListPDF(packListData)
+                }} >Export order</button> 
                 <button type= "button" className="AdinOrderButtonSizer btn blue_BTN mx-2" onClick={this.finishOrder}>Finish order</button> 
                 </div>    
                 </div>    

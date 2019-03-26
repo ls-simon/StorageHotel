@@ -1,9 +1,11 @@
-export function packListPDF (data) {
-    if(data !== undefined && data !== null){
+export function packListPDF(data) {
+
+    if(data) {
+        console.log("Data",data);
         
-        const date = data.date.substring(0,16);
-        const pdfConverter = require('jspdf');
-        const doc = new pdfConverter();
+        const pdfConverter = require('jspdf')
+        const doc = new pdfConverter()
+        const {date, orderId, ownerName} = data
 
         let pdfXPlace = 20;
         let pdfYPlace = 50;
@@ -14,19 +16,19 @@ export function packListPDF (data) {
         doc.line(pdfXPlace,pdfYPlace,175,pdfYPlace);
         doc.setFontSize(15);
         pdfYPlace +=8;
-        doc.text(pdfXPlace,pdfYPlace, "Order number: "+ data.orderId )
+        doc.text(pdfXPlace,pdfYPlace, "Ordre nr.: "+ orderId )
         pdfYPlace +=8;
-        doc.text(pdfXPlace,pdfYPlace, "Customer: "+ data.owner )
+        doc.text(pdfXPlace,pdfYPlace, "Customer: "+ ownerName )
         pdfYPlace +=8;
         doc.text(pdfXPlace,pdfYPlace,"Order date: "+ date)
         doc.setFontSize(10);
         pdfYPlace +=10
 
         doc.setFontStyle("bold")
-        doc.text(pdfXPlace,pdfYPlace,"Item ID")
-        doc.text(pdfXPlace+50,pdfYPlace,"Item Name")
-        doc.text(pdfXPlace+100,pdfYPlace,"Amount")
-        doc.text(pdfXPlace+140,pdfYPlace,"Packed?")
+        doc.text(pdfXPlace,pdfYPlace,"Produkt ID")
+        doc.text(pdfXPlace+50,pdfYPlace,"Produkt Navn")
+        doc.text(pdfXPlace+100,pdfYPlace,"Antal bestilt")
+        doc.text(pdfXPlace+140,pdfYPlace,"Pakket?")
         pdfYPlace +=2
         doc.line(pdfXPlace,pdfYPlace,175,pdfYPlace);
         pdfYPlace +=8
@@ -34,8 +36,8 @@ export function packListPDF (data) {
         let counter = 0;
         const elements = data.orderLines
         for (const key in elements){
-            doc.text(elements[key].productId,pdfXPlace,pdfYPlace)
-            doc.text(elements[key].productName.toString(),pdfXPlace + 50,pdfYPlace);
+            doc.text(elements[key].product.productId,pdfXPlace,pdfYPlace)
+            doc.text(elements[key].product.productName.toString(),pdfXPlace + 50,pdfYPlace);
             doc.text(elements[key].amount.toString(),pdfXPlace+100,pdfYPlace);
             doc.text("[ ]",pdfXPlace+140,pdfYPlace)
             doc.line(20,pdfYPlace+5,175,pdfYPlace+5);
@@ -46,7 +48,7 @@ export function packListPDF (data) {
             }
         }
 
-        doc.save("PackList.pdf")
+        doc.save("Pakkeliste.pdf")
     }
 }
 

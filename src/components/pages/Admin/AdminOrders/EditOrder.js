@@ -36,7 +36,7 @@ class EditOrder extends Component{
 
         let orderLines = this.state.orderLines;
         let newOrderLine = this.state.stock[this.state.selectedProduct];
-        this.setState({orderLines : [...orderLines, newOrderLine]});
+        this.setState({orderLines: [...orderLines, newOrderLine]});
     }
 
     removeOrderLine = (e) => {
@@ -45,7 +45,7 @@ class EditOrder extends Component{
         let id = this.state.orderLines[this.state.selectedOrderLine].productId;
     
         let orderLines = this.state.orderLines.filter(orderLine => {
-           return  orderLine.productId !== id
+           return orderLine.productId !== id
             });
 
        this.setState({orderLines : orderLines})
@@ -94,25 +94,9 @@ class EditOrder extends Component{
             );
         } 
     }
-
      
     updateOrder = (e) => {
-        e.preventDefault();
-
-        const data = makeOrderBodyFromData(this.state.orderLines, this.state.order);
-        
-        del("orders/delete/"+this.props.match.params.id, (response) => {
-        
-            const userId = this.state.order.ownerHexId;
-            const userType = this.state.order.ownerType.toLowerCase();
-
-            post("orders/"+userId+"/"+userType, data, (response) => {
-                if (window.confirm("Address successfully updated!", response)) {
-                    this.props.history.push("/Admin/Orders");
-                }
-            })
-        });
-        
+        e.preventDefault(); 
     }
 
     onEditAddress = (e) => {
@@ -125,7 +109,7 @@ class EditOrder extends Component{
 
         let orderLineColumns = getColumnsFromArray(["Product Name", "Product Id", "Amount", "Quantity"]);
         if (this.props.order) {
-            
+
         return (
             <div className="PageStyle customText_b">
                 <div className="frameBordering">

@@ -39,7 +39,7 @@ export const createOrderAction = (payload) => {
                 //Updates product amount
                 firestore.collection('products').doc(o.productRef).get().then((productSnap)=> {
                     const product = productSnap.data()
-                    firestore.collection('products').doc(o.productRef).update({"quantity": product.quantity-o.amount});
+                    firestore.collection('products').doc(o.productRef).update({"quantity": parseInt(product.quantity)-parseInt(o.amount)});
                 })
 
                 //Returns product reference
@@ -69,14 +69,24 @@ export const createOrderAction = (payload) => {
     }
 }
 
-export const deleteOrderAction = (id) => {
+export const deleteOrderAction = (payload) => {
     return (dispatch, getState, {getFirebase, getFirestore}) => {
     const firestore = getFirestore();
-    firestore.collection('orders').doc(id).delete().then(()=> {
-        dispatch({type: 'DELETE_ORDER', id})
-    }).catch((err) => {
-        dispatch({type: 'DELETE_ORDER_ERROR', err})
-    })
+   
+    
+        payload.orderLines.forEach((orderLine)=> {
+            firestore.collection('products').doc(orderLine.id).update({
+                "quantity": parseInt(orderLine.amount) + parseInt(orderLine.quantity)
+            })
+        })
+                firestore.collection('orders').doc(payload.id).delete().then(()=>{
+                    dispatch({type: 'DELETE_ORDER', id: payload.id})
+                }).catch((err) => {
+                    dispatch({type: 'DELETE_ORDER_ERROR', err})
+                })
+            
+        
+      
     }
 }
 

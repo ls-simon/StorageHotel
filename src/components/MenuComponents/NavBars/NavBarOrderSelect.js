@@ -6,6 +6,7 @@ import {attachCustomerToOrderAction, setOrderLinesToCartAction} from './../../..
 import {customerIsNotSelectedWarning} from './../../../handlers/exceptions'
 
 
+
 class NavBarOrderSelect extends Component {
     
     constructor(props) {
@@ -31,11 +32,11 @@ class NavBarOrderSelect extends Component {
 
     changeToCart = (event) => {
         event.preventDefault();
-        const {orderLines, userType, history, mapOrderToProps} = this.props
+        const {orderLines, profile, history, mapOrderToProps, auth} = this.props
         const {customerId, customerType, customerName} = this.state
             
         if(orderLines.length !== 0){
-            if (userType === "employee"){    
+            if (profile.userType === "employee"){    
                 if (this.isCustomerSelected()){
                     
                     const payload = {
@@ -54,7 +55,19 @@ class NavBarOrderSelect extends Component {
                     customerIsNotSelectedWarning();
                 }
             } else {
+
+                const payload = {
+                    orderLines: orderLines,
+                    selectedCustomer: {
+                        userType: profile.userType,
+                        id: auth.uid,
+                        name: profile.name
+                    }
+                }
+
+                mapOrderToProps(payload)
                 history.push("/User/Order/Cart")
+
             }
         } else { 
             window.alert("You need to add something to the cart")
@@ -69,7 +82,7 @@ class NavBarOrderSelect extends Component {
     createNavBar = () =>{
         
         let navBar = null;
-        if(this.props.userType === "employee"){
+        if(this.props.profile && this.props.profile.userType === "employee"){
             navBar = (
                 <nav className="navbar navbar-light bg-light">                   
                 <form className = "form-inline">
@@ -102,12 +115,19 @@ class NavBarOrderSelect extends Component {
                     )
                 }
             }
-            
-            const mapDispatchToProps = (dispatch) => {
-                
+
+            const mapStateToProps = (state) => {
+                console.log('Props',state)
+                return {
+                    profile: state.firebase.profile,
+                    auth: state.firebase.auth
+                }
+            }
+
+            const mapDispatchToProps = (dispatch) => {    
                 return {
                     mapOrderToProps: (payload) => {dispatch({type: 'SET_ORDER', payload})},
                     }
             }
             
-            export default withRouter(connect(null, mapDispatchToProps)(NavBarOrderSelect))
+            export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NavBarOrderSelect))

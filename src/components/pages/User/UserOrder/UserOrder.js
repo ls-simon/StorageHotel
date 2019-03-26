@@ -1,88 +1,75 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {Link} from "react-router-dom";
+import {connect} from "react-redux";
+import {compose} from "redux";
+import { firestoreConnect } from 'react-redux-firebase';
 import ReactTable from 'react-table';
 import "./UserOrder.css";
-import {connect} from "react-redux";
-import {get, del} from "./../../../../handlers/requestHandlers.js";
-import {makeDataFromOrderList, makePublisherAndItsClientsOrdersData} from '../../../../handlers/dataHandlers.js';
 import {getColumnsFromArray} from './../../../../handlers/columnsHandlers.js';
+import {deleteOrderAction} from './../../../../redux/actions/orderActions'
+import ViewTable from './../../../ReactTables/ViewTable'
 
-class UserOrder extends React.Component {
+class UserOrder extends Component {
     
     constructor(props) {
         super(props);
-
-        this.state = { orders: [], selectedOrder: [], selected: null, selectedId: "" };
+        this.state = { orders: [], selected: null, selectedId: "", selectedOrder: null };
     }
-    
+
     componentDidMount() {
-        
-        this.checkUserType();
-    }
-
-    checkUserType() {
-        if (this.props.userType.toLowerCase() === 'publisher') {
-            this.getPublisherData();
-        } else {
-            this.getClientData();
-        }
-    }
-
-    getPublisherData() {
-
-        get("publishers/"+this.props.userId, (data) => {
-            const orders = makePublisherAndItsClientsOrdersData(data);
-            this.setState({orders: orders})
-        });
-    }
-
-    getClientData() {
-
-        get("clients/"+this.props.userId+"/orders", (data) => {
-            
-            const orders = makeDataFromOrderList(data);
-            this.setState({orders: orders})
-        });
+   
     }
 
 
     setStateAsSelected = (rowInfo) => {
 
-        this.setState({selected: rowInfo.index, selectedId: rowInfo.original.hexId });
+        this.setState({selected: rowInfo.index, selectedId: rowInfo.original.id, selectedOrder: rowInfo.original });
     }
 
     showOrderLines(rowInfo) {
+        let orderLinesRef = rowInfo.original.orderLines
+        let orderLines = []
+        orderLinesRef.forEach((o)=> {
+            let product = this.props.products.filter(p => o.productRef.id === p.id)[0]
+            orderLines.push({
+                amount: o.amount,
+                productName: product.productName,
+                id: product.id,
+                quantity: product.quantity
+            })
+        })
 
-        const selectedOrder = this.state.orders[rowInfo.index].orderLines;
-        this.setState({seletedOrder: selectedOrder});
+        this.setState({orderLines: orderLines});
     }
 
     deleteOrder = (e) =>{
-        e.preventDefault();
+        e.preventDefault(); 
 
         if(this.state.selectedId !== ""){
-            del("orders/delete/"+this.state.selectedId,()=>{
-                let newOrders = this.state.orders.filter(x=>x.hexId!==this.state.selectedId)
-                this.setState({orders:newOrders})
-        
-            })
+            this.props.deleteOrder({...this.state.selectedOrder, orderLines: this.state.orderLines})
         } else {
-         
-            window.alert("Please select something");
-        }
+            window.alert("Vælg venligst en ordren, før du sletter den.");
+        } 
 
+    }
+
+    getdata=()=> {
+       if (this.props.orders) {    
+           return this.props.orders.filter(x=> x.ownerRef.id === this.props.auth.uid)
+       } else { return [] }
     }
 
     render() {
 
-        const orderColumns = getColumnsFromArray(["Order Id", "Owner", "Date"]);
-  
+        const orderColumns = getColumnsFromArray(["Order Id", "Owner Name", "Date"]);
+        const orderLineColumns = getColumnsFromArray(["Product Name", "Amount"])
+
         return(
             <div className="PageStyle">
                 <div className="frameBordering">
                     <div className="UserOrderLeft">
                         <ReactTable 
-                            data={this.state.orders}
+                            data={this.getdata()}
                             className="productTable -striped -highlight"
                             columns={orderColumns}
                             showPagination={false} 
@@ -106,6 +93,9 @@ class UserOrder extends React.Component {
                         />
                     </div>
                     <div className="UserOrderRight">
+                    <ViewTable 
+                    data={this.state.orderLines ? this.state.orderLines : []} 
+                    columns={orderLineColumns}></ViewTable>
                         <Link to="/User/Order/Select" className="btn green_BTN btn-block">Create new order</Link>
                         <button onClick={this.deleteOrder} className="btn red_BTN btn-block">Remove order</button>
                   </div>
@@ -115,12 +105,28 @@ class UserOrder extends React.Component {
     }
 }
 
-const mapStateToProps = (state) => {
 
+const mapStateToProps = state => {
+           
     return {
-        userId: state.loginReducer.userId,
-        userType: state.loginReducer.userType
+        orders: state.firestore.ordered.orders,
+        products: state.firestore.ordered.products,
+        auth: state.firebase.auth,
+        selectedOrder: state.orderReducer.selectedOrder,
+        users: state.firestore.ordered.users
+    } 
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        deleteOrder: (id) => dispatch(deleteOrderAction(id))
     }
 }
 
-export default connect(mapStateToProps)(UserOrder);
+export default compose(
+    connect(mapStateToProps, mapDispatchToProps), 
+    firestoreConnect(
+        [
+            {collection: 'orders'},
+            {collection: 'products'}
+        ]))(UserOrder)

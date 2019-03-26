@@ -74,6 +74,9 @@ class UserOrderCart extends React.Component {
         if(!this.props.auth.uid){
             return <Redirect to="/"/>
         }
+        console.log(this.props.newOrder)
+        console.log(this.props);
+        
         if (this.props.newOrder) {
             
         let lines = this.props.newOrder.orderLines
