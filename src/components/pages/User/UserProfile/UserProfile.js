@@ -29,7 +29,7 @@ class UserProfile extends Component{
        
         
         this.props.updateCustomer(payload)
-        // this.props.history.push('/Home')
+        //Info box 
     }
 
     prepCustomerInfoDoc = (state, props) => {
@@ -78,26 +78,12 @@ class UserProfile extends Component{
                 <div className="PageStyle customText_b">
                 <div className="frameBordering">
                 
-                <ul class="list-group list-group-flush">
-                <li class="list-group-item disabled">Navn</li>
-                <li class="list-group-item">{this.props.profile.name}</li>
-                <li class="list-group-item disabled">Email</li>
-                <li class="list-group-item">{this.props.profile.contactInformation.email}</li>
-                <li class="list-group-item disabled">Phone number</li>
-                <li class="list-group-item">{this.props.profile.contactInformation.phoneNumber}</li>
-                <li class="list-group-item disabled">Address</li>
-                <li class="list-group-item">{this.props.profile.contactInformation.address}</li>
-                <li class="list-group-item disabled">City</li>
-                <li class="list-group-item">{this.props.profile.contactInformation.city}</li>
-                <li class="list-group-item disabled">Zip code</li>
-                <li class="list-group-item">{this.props.profile.contactInformation.zipCode}</li>
-                </ul>
                 
                 
                 <div className="Container col-md-4 offset-md-4">
-                <p className="h2">Redigér profil:</p><br></br></div>
-            
-                <form onSubmit={this.onSubmit}>
+                <p className="h2">Redigér profil:</p><br></br>
+                <div class="row mx-md-n5 mx-auto">
+                <form class="form-group" onSubmit={this.onSubmit}>
                                 <div className="input-group mb-2">
                                     <div className="input-group-prepend">
                                         <span className="input-group-text" id="basic-addon10">User Name</span>
@@ -132,7 +118,7 @@ class UserProfile extends Component{
                                     <input
                                         name="phoneNumber" 
                                         type="tel" 
-                                        className="my-2 form-control" 
+                                        className="form-control" 
                                         onChange={this.onChange}
                                         defaultValue={this.props.profile.contactInformation.phoneNumber} required/>
                                 </div>
@@ -178,7 +164,8 @@ class UserProfile extends Component{
                             </form> 
                 </div>              
                 </div>
-                
+                </div>
+                </div>
                 );
             } else {
                 return (

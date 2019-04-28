@@ -16,10 +16,6 @@ class UserOrder extends Component {
         this.state = { orders: [], selected: null, selectedId: "", selectedOrder: null };
     }
 
-    componentDidMount() {
-   
-    }
-
 
     setStateAsSelected = (rowInfo) => {
 
@@ -54,7 +50,7 @@ class UserOrder extends Component {
     }
 
     getdata=()=> {
-       if (this.props.orders) {    
+       if (this.props.orders) {  
            return this.props.orders.filter(x=> x.ownerRef.id === this.props.auth.uid)
        } else { return [] }
     }
@@ -66,9 +62,17 @@ class UserOrder extends Component {
 
         return(
             <div className="PageStyle">
-                <div className="frameBordering">
-                    <div className="UserOrderLeft">
-                        <ReactTable 
+            
+            <div class="container">
+           
+            <div className="PageStyle customText_b">
+            <p className="h2">Ordrer:</p></div>
+            
+            
+     
+            <div class="row">
+              <div class="col">
+              <ReactTable 
                             data={this.getdata()}
                             className="productTable -striped -highlight"
                             columns={orderColumns}
@@ -91,16 +95,27 @@ class UserOrder extends Component {
                                 }
                             }}
                         />
-                    </div>
-                    <div className="UserOrderRight">
-                    <ViewTable 
+              </div>
+              <div class="col">
+              <ViewTable 
                     data={this.state.orderLines ? this.state.orderLines : []} 
                     columns={orderLineColumns}></ViewTable>
-                        <Link to="/User/Order/Select" className="btn green_BTN btn-block">Create new order</Link>
-                        <button onClick={this.deleteOrder} className="btn red_BTN btn-block">Remove order</button>
-                  </div>
-                </div>    
-            </div>
+             </div>
+           </div></div>
+           
+           <div className="row">
+               <div className="col"><Link to="/User/Order/Select" className="btn green_BTN btn-block">Create new order</Link>
+                       </div>
+               <div className="col"><button onClick={this.deleteOrder} className="btn red_BTN btn-block">Remove order</button>
+         </div>
+           </div>
+           <div className="frameBordering">
+                         </div> 
+           </div>
+         
+                       
+                  
+             
         );
     }
 }
